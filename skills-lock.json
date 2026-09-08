@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "webgpu": {
+      "source": "cazala/webgpu-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "56144560abdb49a4e87209579233a9dd0aabb8cd1ca7775b6d1ef8b7df285b99"
+    }
+  }
+}

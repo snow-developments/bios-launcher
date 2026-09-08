@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "design-preview",
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["run", "-A", "jsr:@std/http/file-server", "design", "--port", "8791"],
+      "port": 8791,
+      "url": "http://localhost:8791"
+    }
+  ]
+}
