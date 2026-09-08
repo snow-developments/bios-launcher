@@ -79,8 +79,9 @@ export async function createCheckedShaderModule(
   );
 
   for (const message of messages) {
-    const location =
-      message.lineNum > 0 ? `${message.lineNum}:${message.linePos}` : "unknown";
+    const location = message.lineNum > 0
+      ? `${message.lineNum}:${message.linePos}`
+      : "unknown";
     const text = `${label} ${message.type} at ${location}: ${message.message}`;
     if (message.type === "error") {
       console.error(text);

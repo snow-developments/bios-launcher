@@ -1,6 +1,7 @@
 # Initialization and lifecycle
 
-Use this reference when creating or reviewing adapter, device, canvas, resize, error, loss, and teardown code.
+Use this reference when creating or reviewing adapter, device, canvas, resize,
+error, loss, and teardown code.
 
 ## Contents
 
@@ -13,14 +14,18 @@ Use this reference when creating or reviewing adapter, device, canvas, resize, e
 
 ## Negotiate capabilities deliberately
 
-WebGPU requires a secure context. Treat a missing `navigator.gpu`, a missing adapter, and device creation failure as separate outcomes.
+WebGPU requires a secure context. Treat a missing `navigator.gpu`, a missing
+adapter, and device creation failure as separate outcomes.
 
-Do not request every adapter feature or its maximum limits. That reduces portability and can make `requestDevice()` fail on otherwise usable hardware. Start from the core defaults and request only capabilities required by the selected path.
+Do not request every adapter feature or its maximum limits. That reduces
+portability and can make `requestDevice()` fail on otherwise usable hardware.
+Start from the core defaults and request only capabilities required by the
+selected path.
 
 ```ts
 async function requestGpu(
   neededFeatures: GPUFeatureName[] = [],
-  neededLimits: Record<string, number> = {}
+  neededLimits: Record<string, number> = {},
 ): Promise<{ adapter: GPUAdapter; device: GPUDevice }> {
   if (!navigator.gpu) {
     throw new Error("WebGPU is unavailable; use the fallback experience.");
@@ -38,7 +43,9 @@ async function requestGpu(
   for (const [name, value] of Object.entries(neededLimits)) {
     const supported = adapter.limits[name as keyof GPUSupportedLimits];
     if (typeof supported !== "number" || supported < value) {
-      throw new Error(`Required WebGPU limit is unavailable: ${name} >= ${value}`);
+      throw new Error(
+        `Required WebGPU limit is unavailable: ${name} >= ${value}`,
+      );
     }
   }
 
@@ -50,7 +57,8 @@ async function requestGpu(
 }
 ```
 
-For a reduced mode, filter optional features and select a matching shader/pipeline path. Do not pass an unsupported feature to `requiredFeatures`.
+For a reduced mode, filter optional features and select a matching
+shader/pipeline path. Do not pass an unsupported feature to `requiredFeatures`.
 
 ## Configure the canvas once per device
 
@@ -67,13 +75,19 @@ context.configure({
 });
 ```
 
-Use the same `format` in the presentation pipeline target. Acquire `context.getCurrentTexture()` inside the frame; do not retain swapchain textures between frames.
+Use the same `format` in the presentation pipeline target. Acquire
+`context.getCurrentTexture()` inside the frame; do not retain swapchain textures
+between frames.
 
-Choose `alphaMode: "opaque"` for an opaque application. With `"premultiplied"`, make the fragment output and blend state consistent with premultiplied canvas composition.
+Choose `alphaMode: "opaque"` for an opaque application. With `"premultiplied"`,
+make the fragment output and blend state consistent with premultiplied canvas
+composition.
 
 ## Surface asynchronous errors
 
-WebGPU validation is intentionally asynchronous. Add labels, a global uncaptured-error handler, scoped errors around fallible operations, and shader compilation diagnostics.
+WebGPU validation is intentionally asynchronous. Add labels, a global
+uncaptured-error handler, scoped errors around fallible operations, and shader
+compilation diagnostics.
 
 ```ts
 device.addEventListener("uncapturederror", (event) => {
@@ -83,7 +97,7 @@ device.addEventListener("uncapturederror", (event) => {
 async function checkedModule(
   device: GPUDevice,
   label: string,
-  code: string
+  code: string,
 ): Promise<GPUShaderModule> {
   const module = device.createShaderModule({ label, code });
   const info = await module.getCompilationInfo();
@@ -91,17 +105,23 @@ async function checkedModule(
   if (errors.length > 0) {
     throw new Error(
       errors
-        .map((message) => `${label}:${message.lineNum}:${message.linePos} ${message.message}`)
-        .join("\n")
+        .map((message) =>
+          `${label}:${message.lineNum}:${message.linePos} ${message.message}`
+        )
+        .join("\n"),
     );
   }
   return module;
 }
 ```
 
-Prefer `createComputePipelineAsync()` and `createRenderPipelineAsync()` during loading or structural rebuilds. They surface `GPUPipelineError` through rejection and avoid doing expensive pipeline work synchronously on the calling task.
+Prefer `createComputePipelineAsync()` and `createRenderPipelineAsync()` during
+loading or structural rebuilds. They surface `GPUPipelineError` through
+rejection and avoid doing expensive pipeline work synchronously on the calling
+task.
 
-Use balanced error scopes for validation or allocation that the application must recover from:
+Use balanced error scopes for validation or allocation that the application must
+recover from:
 
 ```ts
 device.pushErrorScope("validation");
@@ -110,11 +130,14 @@ const error = await device.popErrorScope();
 if (error) throw new Error(error.message);
 ```
 
-Do not wrap the whole application in one long-lived scope; that obscures ownership and can capture unrelated errors.
+Do not wrap the whole application in one long-lived scope; that obscures
+ownership and can capture unrelated errors.
 
 ## Size from rendered CSS pixels
 
-Canvas CSS size and backing-store size are different. Observe the rendered element, multiply by DPR, clamp to `device.limits.maxTextureDimension2D`, and skip no-op assignments.
+Canvas CSS size and backing-store size are different. Observe the rendered
+element, multiply by DPR, clamp to `device.limits.maxTextureDimension2D`, and
+skip no-op assignments.
 
 ```ts
 function resizeCanvas(canvas: HTMLCanvasElement, device: GPUDevice): boolean {
@@ -130,20 +153,28 @@ function resizeCanvas(canvas: HTMLCanvasElement, device: GPUDevice): boolean {
 }
 ```
 
-Repeatedly assigning equal `canvas.width` or `canvas.height` clears presentation state and can cause flashes. Recreate size-dependent intermediate textures only after a real size change, and destroy the old textures.
+Repeatedly assigning equal `canvas.width` or `canvas.height` clears presentation
+state and can cause flashes. Recreate size-dependent intermediate textures only
+after a real size change, and destroy the old textures.
 
 ## Handle device loss as a lifecycle transition
 
-`requestDevice()` can return a device that becomes lost immediately or later. Once lost, rebuild from a new adapter/device or move to the fallback; resources from the old device cannot be reused.
+`requestDevice()` can return a device that becomes lost immediately or later.
+Once lost, rebuild from a new adapter/device or move to the fallback; resources
+from the old device cannot be reused.
 
 ```ts
 void device.lost.then((info) => {
   if (info.reason === "destroyed") return;
-  showFatalError(new Error(`WebGPU device lost: ${info.message || info.reason}`));
+  showFatalError(
+    new Error(`WebGPU device lost: ${info.message || info.reason}`),
+  );
 });
 ```
 
-Keep CPU-side descriptors and seed data when recovery matters. Make initialization and destruction idempotent so a lost device can be replaced without overlapping loops or observers.
+Keep CPU-side descriptors and seed data when recovery matters. Make
+initialization and destruction idempotent so a lost device can be replaced
+without overlapping loops or observers.
 
 ## Tear down in ownership order
 

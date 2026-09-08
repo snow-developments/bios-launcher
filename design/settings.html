@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings — BIOS Launcher</title>
+    <link rel="stylesheet" href="launcher.css">
+  </head>
+  <body data-back="index.html">
+    <div class="corners" id="corners" aria-hidden="true">
+      <span class="clock-date">0000/00/00</span>
+      <span class="clock-time">00:00:00</span>
+    </div>
+
+    <div class="shell">
+      <main>
+        <div class="settings">
+          <div class="settings-stage" aria-hidden="true">
+            <div class="assembly" id="assembly"></div>
+          </div>
+
+          <h1>Settings</h1>
+
+          <ul class="setting-list" id="setting-list"
+            aria-label="System settings">
+            <li class="static">
+              <span class="setting-key">Clock Adjustment</span>
+              <span class="setting-val"
+                id="clock-now">0000/00/00 00:00:00</span>
+            </li>
+            <li class="active" data-setting="format">
+              <span class="setting-key">Time Format</span>
+              <span class="setting-val" id="format-val">24-Hour</span>
+            </li>
+            <li class="active" data-setting="reset-splash">
+              <span class="setting-key">Debug · Reset Splash</span>
+              <span class="setting-val">Clear session</span>
+            </li>
+          </ul>
+
+          <p
+            class="games-note">Interactive mockup · Time Format and Reset Splash are the live controls</p>
+        </div>
+      </main>
+
+      <footer class="wide">
+        <span class="hint">
+        <span class="glyph square" aria-hidden="true"><svg viewBox="0 0 12 12"><rect x="2.4" y="2.4" width="7.2" height="7.2" rx="1"/></svg></span>
+        Display
+      </span>
+        <span class="hint">
+        <span class="glyph cross" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2.6 2.6 9.4 9.4M9.4 2.6 2.6 9.4"/></svg></span>
+        Enter
+      </span>
+        <span class="hint">
+        <span class="glyph circle" aria-hidden="true"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.1"/></svg></span>
+        Back
+      </span>
+        <span class="hint">
+        <span class="glyph triangle" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 2.3 10.4 9.7H1.6Z"/></svg></span>
+        Options
+      </span>
+      </footer>
+    </div>
+
+    <div id="notice">Not available in this build.</div>
+
+    <script src="launcher.js"></script>
+    <script>
+    // 12 pillars, always — one per clock position; the current hour (mod 12) is lit.
+    // AM/PM state does not change the pillar count or which one is lit.
+    const assembly = document.querySelector("#assembly");
+    for (let i = 0; i < 12; i++) {
+      const p = document.createElement("span");
+      p.className = "pillar";
+      p.style.setProperty("--i", i);
+      assembly.append(p);
+    }
+    const pillars = [...assembly.children];
+    const litHour = () => {
+      const pos = new Date().getHours() % 12;
+      pillars.forEach((p, i) => p.classList.toggle("lit", i === pos));
+    };
+    litHour();
+    setInterval(litHour, 60000);
+
+    // Live "Clock Adjustment" read-out, in the current format.
+    const clockNow = document.querySelector("#clock-now");
+    const formatVal = document.querySelector("#format-val");
+    const render = () => {
+      const { date, time } = Bios.clock.parts();
+      clockNow.textContent = `${date} ${time}`;
+      formatVal.textContent = Bios.clock.label();
+    };
+    render();
+    setInterval(render, 1000);
+    document.addEventListener("bios:clockchange", render);
+
+    // Time Format is the one actionable row: toggle + persist.
+    const toggleFormat = () => {
+      Bios.clock.toggle();
+      Bios.notify("Time format: " + Bios.clock.label());
+    };
+    const nav = Bios.listNav("#setting-list li", {
+      onActivate(el) {
+        if (el.dataset.setting === "format") toggleFormat();
+        else if (el.dataset.setting === "reset-splash") {
+          try {
+            sessionStorage.clear();
+          } catch { /* private mode */ }
+          Bios.notify("Session storage cleared — splash replays on next boot");
+        }
+      },
+    });
+    addEventListener("keydown", (e) => {
+      if (
+        (e.key === "ArrowLeft" || e.key === "ArrowRight") &&
+        nav.els[nav.index].dataset.setting === "format"
+      ) {
+        e.preventDefault();
+        toggleFormat();
+      }
+    });
+    </script>
+  </body>
+</html>

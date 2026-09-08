@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Games — BIOS Launcher</title>
+  <link rel="stylesheet" href="launcher.css">
+</head>
+<body data-back="index.html">
+  <div class="corners" id="corners" aria-hidden="true">
+    <span class="clock-date">0000/00/00</span>
+    <span class="clock-time">00:00:00</span>
+  </div>
+
+  <div class="shell">
+    <main>
+      <div class="games">
+        <h1>Games</h1>
+        <ul class="game-list" id="game-list" aria-label="Installed games">
+          <li class="active">
+            <span class="game-name">Shadow of the Colossus</span>
+            <span class="game-meta">C:\Games\Shadow\game.exe</span>
+          </li>
+          <li class="empty"><span class="game-name">— empty slot —</span></li>
+          <li class="empty"><span class="game-name">— empty slot —</span></li>
+        </ul>
+        <p class="games-note">Catalog preview · launching isn't wired up in this mockup</p>
+      </div>
+    </main>
+
+    <footer>
+      <span class="hint">
+        <span class="glyph cross" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2.6 2.6 9.4 9.4M9.4 2.6 2.6 9.4"/></svg></span>
+        Open
+      </span>
+      <span class="hint">
+        <span class="glyph circle" aria-hidden="true"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.1"/></svg></span>
+        Back
+      </span>
+    </footer>
+  </div>
+
+  <div id="notice">Launching isn't wired up in this mockup.</div>
+
+  <script src="launcher.js"></script>
+  <script>
+    Bios.listNav('#game-list li', {
+      onActivate(el) {
+        if (!el.classList.contains('empty')) Bios.notify('Launching isn't wired up in this mockup.');
+      },
+    });
+  </script>
+</body>
+</html>

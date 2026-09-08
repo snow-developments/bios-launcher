@@ -1,0 +1,630 @@
+:root {
+  /* PS2 BIOS main menu: black void, blue-white dot ring, cool grey menu */
+  --bios-void: #000000;
+  --bios-ring-core: #eaf4ff;
+  --bios-ring-glow: #7cc6ff;
+  --bios-arc: #2c4c7a;
+  --bios-menu-active: #3aa2ff;
+  --bios-menu-idle: #6b6b6b;
+  --bios-hint: #8a8a8a;
+  --bios-tile-line: #23364f;
+  --bios-tile-fill: #060a12cc;
+  --bios-glyph-cross: #6fb2ff;
+  --bios-glyph-triangle: #74e08f;
+  --bios-glyph-circle: #f0616d;
+  --bios-glyph-square: #d69ad6;
+  --bios-font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  --bios-space-2: 8px;
+  --bios-space-3: 12px;
+  --bios-space-4: 16px;
+  --bios-space-5: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--bios-menu-idle);
+  /* Near-black, with the faintest lift behind the ring */
+  background: radial-gradient(40% 40% at 42% 50%, #05070d 0%, var(--bios-void)
+    70%);
+  font: 16px var(--bios-font-family);
+  overflow: hidden;
+}
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+/* ---- Center: dot ring + menu ---- */
+main {
+  display: grid;
+  place-items: center;
+}
+
+.console {
+  display: flex;
+  align-items: center;
+  gap: clamp(28px, 6vw, 64px);
+}
+
+/* The orrery: a WebGPU canvas sized to sit where the CSS dot ring used to. */
+.orrery {
+  display: block;
+  width: clamp(120px, 16vw, 160px);
+  aspect-ratio: 1;
+  flex: none;
+}
+
+/* Static fallback when WebGPU is unavailable: a lone core plus one faint ring,
+   so the layout never collapses. Applied by orrery.js on failure. */
+.orrery--fallback {
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--bios-ring-core) 0 6%,
+    var(--bios-ring-glow) 10%, transparent 24%),
+    radial-gradient(circle at 50% 50%, transparent 0 46%, var(--bios-arc) 47%
+    49%, transparent 50%);
+  opacity: .8;
+}
+
+/* ---- Menu + tile column ---- */
+/* Tile is absolutely placed so the ring stays centered on the menu itself */
+.right {
+  position: relative;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menu a {
+  padding: 6px 0;
+  color: var(--bios-menu-idle);
+  font: 400 clamp(24px, 3vw, 34px) var(--bios-font-family);
+  letter-spacing: .02em;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .15s, text-shadow .15s;
+}
+
+.menu a:hover,
+.menu a.active {
+  color: var(--bios-menu-active);
+  text-shadow: 0 0 16px #3aa2ff88;
+}
+
+.tile,
+.surface-stub {
+  position: absolute;
+  top: calc(100% + var(--bios-space-5));
+  left: 0;
+}
+
+.tile {
+  width: max-content;
+  max-width: 420px;
+  padding: var(--bios-space-4) var(--bios-space-5);
+  border: 1px solid var(--bios-tile-line);
+  background: var(--bios-tile-fill);
+  color: var(--bios-menu-idle);
+}
+
+.tile[hidden],
+.surface-stub[hidden] {
+  display: none;
+}
+
+.tile small {
+  letter-spacing: .22em;
+  font-size: 11px;
+  color: #5f7a9e;
+}
+.tile h2 {
+  margin: 8px 0 6px;
+  font-weight: 400;
+  font-size: clamp(18px, 2vw, 22px);
+  color: #cdd9e8;
+  letter-spacing: .04em;
+}
+.tile p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.surface-stub {
+  font-size: 13px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #4d4d4d;
+}
+
+/* ---- Games page ---- */
+.games {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bios-space-5);
+  width: min(560px, 82vw);
+}
+.games h1 {
+  margin: 0;
+  font: 400 clamp(26px, 3.4vw, 38px) var(--bios-font-family);
+  color: var(--bios-menu-active);
+  letter-spacing: .04em;
+  text-shadow: 0 0 16px #3aa2ff88;
+}
+.game-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.game-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 16px;
+  border-left: 2px solid transparent;
+  color: var(--bios-menu-idle);
+  transition: color .15s, background .15s, border-color .15s;
+}
+.game-list li.active {
+  border-left-color: var(--bios-menu-active);
+  background: linear-gradient(90deg, #1218335e, transparent);
+  color: #cdd9e8;
+}
+.game-name {
+  font-size: clamp(16px, 2vw, 20px);
+  letter-spacing: .03em;
+}
+.game-meta {
+  font-size: 12px;
+  color: #5f7a9e;
+  font-variant-numeric: tabular-nums;
+}
+.game-list li.empty .game-name {
+  color: #3a3a3a;
+  font-style: italic;
+}
+.games-note {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #4d4d4d;
+}
+
+/* ---- Settings page ---- */
+.settings {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bios-space-5);
+  width: min(560px, 84vw);
+}
+.settings h1 {
+  position: relative;
+  margin: 0;
+  font: 400 clamp(24px, 3.2vw, 34px) var(--bios-font-family);
+  color: #d7c46a; /* BIOS yellow, per System Configuration screen */
+  letter-spacing: .04em;
+  text-shadow: 0 0 16px #d7c46a55;
+}
+
+/* Rotating ring of 12 pillars — one per clock position, the current hour lit */
+.settings-stage {
+  position: absolute;
+  inset: -14% -10%;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: .55;
+  z-index: -1;
+}
+.assembly {
+  position: relative;
+  width: min(460px, 66vw);
+  aspect-ratio: 1;
+  transform-style: preserve-3d;
+  transform: rotateX(66deg);
+  animation: assembly-spin 64s linear infinite;
+}
+.pillar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 74px;
+  margin: -37px 0 0 -6px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #6b6fb0, #322c63 60%, #1c1740);
+  box-shadow: inset 2px 0 4px #ffffff33, inset -3px 0 6px #0007;
+  transform: rotate(calc(var(--i) * 30deg)) translateY(clamp(-165px, -24vw,
+    -120px)) rotateX(-66deg);
+  opacity: .45;
+}
+.pillar.lit {
+  background: linear-gradient(180deg, #dff4ff, #7fd6ff 45%, #3a7fd0);
+  box-shadow: 0 0 20px 4px #7fd6ffaa;
+  opacity: 1;
+}
+
+.setting-list {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.setting-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 12px 16px;
+  border-left: 2px solid transparent;
+  color: var(--bios-menu-idle);
+  transition: color .15s, background .15s, border-color .15s;
+}
+.setting-list li.active {
+  border-left-color: var(--bios-menu-active);
+  background: linear-gradient(90deg, #1218335e, transparent);
+  color: #cdd9e8;
+}
+.setting-list li.static {
+  opacity: .6;
+}
+.setting-key {
+  letter-spacing: .03em;
+}
+.setting-val {
+  color: #cdd9e8;
+  font-variant-numeric: tabular-nums;
+}
+.setting-list li.static .setting-val {
+  color: #5f7a9e;
+}
+
+/* ---- About page ---- */
+.about {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bios-space-5);
+  width: min(560px, 84vw);
+}
+.about h1 {
+  margin: 0;
+  font: 400 clamp(24px, 3.2vw, 34px) var(--bios-font-family);
+  color: #d7c46a;
+  letter-spacing: .04em;
+  text-shadow: 0 0 16px #d7c46a55;
+}
+.spec {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 28px;
+  font-size: 14px;
+}
+.spec dt {
+  color: #5f7a9e;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: 11px;
+  align-self: center;
+}
+.spec dd {
+  margin: 0;
+  color: #cdd9e8;
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+
+/* ---- Bottom button hints ---- */
+footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 clamp(28px, 8vw, 96px) clamp(22px, 4vw, 40px);
+  color: var(--bios-hint);
+  font-size: clamp(13px, 1.5vw, 16px);
+}
+
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: .6em;
+  line-height: 1;
+}
+
+.glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 1.55em;
+  height: 1.55em;
+  flex: none;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+}
+.glyph svg {
+  display: block;
+  width: .6em;
+  height: .6em;
+  overflow: visible;
+}
+.glyph svg path,
+.glyph svg circle,
+.glyph svg rect {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* optical centering: the triangle's visual mass sits low */
+.glyph.triangle svg {
+  transform: translateY(-.03em);
+}
+.glyph.cross {
+  color: var(--bios-glyph-cross);
+}
+.glyph.triangle {
+  color: var(--bios-glyph-triangle);
+}
+.glyph.circle {
+  color: var(--bios-glyph-circle);
+}
+.glyph.square {
+  color: var(--bios-glyph-square);
+}
+
+/* 4-action footer (settings): centered with even spacing */
+footer.wide {
+  justify-content: center;
+  gap: clamp(16px, 5vw, 52px);
+}
+
+/* Corner date/time — System Configuration layout, toast-like fade */
+.corners {
+  position: fixed;
+  inset: 0 0 auto 0;
+  display: flex;
+  justify-content: space-between;
+  padding: clamp(16px, 3vw, 28px) clamp(28px, 8vw, 96px) 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .45s ease, transform .45s ease;
+}
+.corners.awake {
+  opacity: 1;
+  transform: none;
+}
+
+.clock-date,
+.clock-time {
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(15px, 1.8vw, 20px);
+  letter-spacing: .12em;
+  color: #b9c2d4;
+  text-shadow: 0 0 12px #2c4c7a88;
+}
+
+#notice {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(60px, 9vw, 96px);
+  transform: translate(-50%, 6px);
+  color: #cfe4ff;
+  letter-spacing: .12em;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity .2s, transform .2s;
+}
+#notice.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@keyframes assembly-spin {
+  to {
+    transform: rotateX(66deg) rotate(360deg);
+  }
+}
+
+/* ---- Boot splash (index only) ---- */
+/* Full-viewport cover shown while the orrery's WebGPU shaders compile; drifting
+   cubes + light trails on a 2D canvas, a CSS blue nebula behind, the Coldstart
+   wordmark. splash.js adds .splash--out to fade it into the menu, then [hidden]. */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #000;
+  /* Long pole of the exit: the layer (and the wordmark with it) fades over
+     ~1.5 s; splash.js hides the element when this transition ends. */
+  transition: opacity 1.5s ease;
+}
+.splash[hidden] {
+  display: none;
+}
+/* Exit choreography, all starting together: the wordmark + layer fade over
+   ~1.5 s (the long pole), the fog scales past the camera over ~0.75 s, and
+   splash.js eases the trails onto the orrery nodes over ~0.75 s. */
+.splash--out {
+  opacity: 0;
+  pointer-events: none;
+}
+.splash--out .splash-fog {
+  animation: none;
+  transform: scale(1.9);
+}
+
+.splash-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.splash-fog {
+  position: absolute;
+  inset: -35%;
+  /* Irregular, overlapping blobs -- no clean concentric rings for the warp to
+     expose. The SVG filter does the roil and lays real noise over the top. */
+  background:
+    radial-gradient(46% 54% at 45% 42%, rgba(126, 174, 255, .40), rgba(126, 174,
+    255, 0) 62%),
+    radial-gradient(34% 46% at 62% 34%, rgba(88, 138, 255, .22), rgba(88, 138,
+    255, 0) 68%),
+    radial-gradient(40% 30% at 34% 64%, rgba(150, 190, 255, .16), rgba(150, 190,
+    255, 0) 70%),
+    radial-gradient(135% 110% at 50% 46%, rgba(8, 22, 54, .62), #000 68%);
+  filter: url(#splash-fog-warp) blur(6px);
+  animation: splash-drift 26s ease-in-out infinite alternate;
+  transition: transform .75s cubic-bezier(.5, 0, .85, .4);
+}
+
+.splash-cubes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.splash::after {
+  /* vignette */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 120% at 50% 50%, rgba(0, 0, 0, 0) 52%,
+    rgba(0, 0, 0, .72) 100%);
+}
+
+.splash-word {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 0 6vw;
+  text-align: center;
+  text-wrap: balance;
+  font: 700 clamp(18px, 3.4vw, 34px) var(--bios-font-family);
+  letter-spacing: .05em;
+  color: #eef4ff;
+  text-shadow: 0 0 20px rgba(150, 190, 255, .65), 0 0 4px rgba(255, 255, 255,
+    .5);
+  opacity: 0; /* fades in when splash.js adds .splash--lit next frame */
+  transition: opacity .25s ease;
+}
+.splash--lit .splash-word {
+  opacity: 1;
+}
+/* The wordmark is a self-contained mid-sequence beat: in on the first frame,
+   then splash.js adds .splash--dim ~1 s in and it fades out over 1.5 s -- gone
+   well before the exit. It plays no part in .splash--out. After .splash--lit so
+   it wins. */
+.splash--dim .splash-word {
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+@keyframes splash-drift {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1.06);
+  }
+  to {
+    transform: translate3d(4%, 3%, 0) scale(1.12);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .assembly {
+    animation: none;
+  }
+  .corners {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .splash-fog {
+    animation: none;
+    transition: none;
+    filter: blur(10px);
+  }
+  .splash-word {
+    opacity: 1;
+    transition: none;
+  }
+  .splash--dim .splash-word {
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .splash {
+    transition: opacity .3s ease;
+  }
+  .splash--out .splash-fog {
+    transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .console {
+    flex-direction: column;
+    gap: 32px;
+  }
+  .right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+  .tile,
+  .surface-stub {
+    position: static;
+  }
+  .menu a,
+  .surface-stub {
+    text-align: center;
+  }
+  .menu {
+    align-items: center;
+  }
+  .corners {
+    padding: 14px 18px 0;
+  }
+  .clock-date,
+  .clock-time {
+    font-size: 13px;
+    letter-spacing: .08em;
+  }
+  .settings,
+  .about {
+    width: min(560px, 90vw);
+  }
+  .setting-list li {
+    flex-wrap: wrap;
+    gap: 4px 16px;
+  }
+  .spec {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .spec dt {
+    margin-top: 12px;
+  }
+  footer.wide {
+    flex-wrap: wrap;
+    gap: 10px 22px;
+  }
+}

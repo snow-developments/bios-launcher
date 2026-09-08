@@ -1,4 +1,4 @@
-import { access, readFile, readdir } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -76,7 +76,7 @@ for (const path of markdownFiles) {
     localLinkCount++;
     if (!(await exists(resolve(dirname(path), target)))) {
       errors.push(
-        `Broken local link in ${relative(skillDir, path)}: ${raw}`
+        `Broken local link in ${relative(skillDir, path)}: ${raw}`,
       );
     }
   }
@@ -92,12 +92,18 @@ for (const path of files.filter((value) => value.endsWith(".ts"))) {
 const allMarkdown = (
   await Promise.all(markdownFiles.map((path) => readFile(path, "utf8")))
 ).join("\n");
-if (/all (?:WGSL )?structs (?:are|should be) aligned to 16 bytes/i.test(allMarkdown)) {
-  errors.push("WGSL layout guidance must not claim every struct is 16-byte aligned");
+if (
+  /all (?:WGSL )?structs (?:are|should be) aligned to 16 bytes/i.test(
+    allMarkdown,
+  )
+) {
+  errors.push(
+    "WGSL layout guidance must not claim every struct is 16-byte aligned",
+  );
 }
 if (/\bnpx\s+skills\s+add\b/i.test(allMarkdown)) {
   errors.push(
-    "Keep executable third-party install commands out of the distributed skill"
+    "Keep executable third-party install commands out of the distributed skill",
   );
 }
 
@@ -109,22 +115,24 @@ if (!openai.includes("$webgpu")) {
 const starterSources = await Promise.all(
   ["src/gpu.ts", "src/main.ts", "src/shaders.ts"].map((path) =>
     readFile(resolve(skillDir, "assets/starter", path), "utf8")
-  )
+  ),
 );
 const starter = starterSources.join("\n");
 if (/\bfetch\s*\(/.test(starter)) {
   errors.push(
-    "The bundled starter must not fetch runtime code or other network dependencies"
+    "The bundled starter must not fetch runtime code or other network dependencies",
   );
 }
-for (const hook of [
-  "navigator.gpu",
-  "getCompilationInfo",
-  "uncapturederror",
-  "device.lost",
-  "ResizeObserver",
-  "destroy()",
-]) {
+for (
+  const hook of [
+    "navigator.gpu",
+    "getCompilationInfo",
+    "uncapturederror",
+    "device.lost",
+    "ResizeObserver",
+    "destroy()",
+  ]
+) {
   if (!starter.includes(hook)) {
     errors.push(`Starter is missing resilience hook: ${hook}`);
   }
@@ -135,5 +143,5 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `Validated WebGPU skill (${markdownFiles.length} Markdown files, ${localLinkCount} local links)`
+  `Validated WebGPU skill (${markdownFiles.length} Markdown files, ${localLinkCount} local links)`,
 );

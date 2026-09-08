@@ -1,0 +1,727 @@
+<title>BIOS Launcher Boot Splash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  color-scheme: dark;
+  /* Derived from design/launcher.tokens.json — the launcher's own palette */
+  --void: #04060c;
+  --panel: #0a0e18;
+  --panel-edge: #16203a;
+  --ink: #d6e4f7;
+  --ink-dim: #8a97ac;
+  --ink-faint: #5c677d;
+  --arc: #2c4c7a; /* bios-arc */
+  --glow: #7cc6ff; /* bios-ring-glow — the accent */
+  --core: #eaf4ff; /* bios-ring-core */
+  /* The splash's three signature light-trail colors, straight off the reference frame */
+  --trail-red: #ff5a4d;
+  --trail-green: #7dff8a;
+  --trail-violet: #b06cff;
+
+  --measure: 44rem;
+  --step: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(120% 80% at 20% -10%, #0b1830 0%, rgba(11,24,48,0) 55%),
+    var(--void);
+  color: var(--ink);
+  font: 400 1rem/1.65 "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: 0.005em;
+}
+
+.wrap {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: clamp(2.2rem, 1rem + 5vw, 4.5rem) clamp(1.1rem, 0.4rem + 3vw, 2rem)
+    5rem;
+}
+
+/* ---- rhythm ---- */
+header,
+section {
+  margin-top: calc(var(--step) * 1.7);
+}
+header {
+  margin-top: 0;
+}
+section > * + * {
+  margin-top: 1.1rem;
+}
+
+.eyebrow {
+  font-family: "Chakra Petch", "Trebuchet MS", sans-serif;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--glow);
+  margin: 0 0 0.6rem;
+}
+
+h1 {
+  font-family: "Chakra Petch", "Trebuchet MS", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.9rem, 1.3rem + 3vw, 2.7rem);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.lede {
+  font-size: 1.08rem;
+  color: var(--ink-dim);
+  max-width: 38rem;
+}
+
+h2 {
+  font-family: "Chakra Petch", "Trebuchet MS", sans-serif;
+  font-weight: 600;
+  font-size: 1.16rem;
+  letter-spacing: 0.02em;
+  margin: 0;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--panel-edge);
+}
+
+p {
+  margin: 0;
+}
+strong {
+  color: var(--core);
+  font-weight: 600;
+}
+a {
+  color: var(--glow);
+}
+
+code,
+.mono {
+  font-family: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+  font-size: 0.86em;
+}
+code {
+  background: rgba(124, 198, 255, 0.08);
+  border: 1px solid var(--panel-edge);
+  border-radius: 4px;
+  padding: 0.08em 0.38em;
+  color: var(--ink);
+}
+
+/* ---- hero preview: a static resting frame of the splash ---- */
+.preview {
+  position: relative;
+  aspect-ratio: 640 / 384;
+  margin-top: 1.6rem;
+  border: 1px solid var(--panel-edge);
+  border-radius: 8px;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 70% at 50% 46%, rgba(60,110,210,0.55) 0%,
+    rgba(20,45,110,0.28) 34%, rgba(4,6,12,0) 68%),
+    #000;
+  isolation: isolate;
+}
+.preview::after {
+  /* vignette */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 120% at 50% 50%, rgba(0,0,0,0) 52%,
+    rgba(0,0,0,0.72) 100%);
+}
+.fog {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(38% 46% at 42% 40%, rgba(120,170,255,0.30),
+    rgba(120,170,255,0) 70%),
+    radial-gradient(30% 34% at 63% 58%, rgba(80,130,255,0.24),
+    rgba(80,130,255,0) 70%);
+  filter: blur(6px);
+  animation: drift 26s ease-in-out infinite alternate;
+}
+.cube {
+  position: absolute;
+  width: 8.5%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(150,180,220,0.5);
+  background: linear-gradient(135deg, rgba(40,60,90,0.55), rgba(8,12,20,0.2));
+  transform: rotate(28deg);
+  filter: blur(0.4px);
+  box-shadow: inset 0 0 12px rgba(0,0,0,0.6);
+}
+.cube.a {
+  left: 9%;
+  top: 16%;
+  opacity: 0.75;
+  animation: tumbleA 34s linear infinite;
+}
+.cube.b {
+  right: 12%;
+  top: 12%;
+  width: 6.5%;
+  opacity: 0.55;
+  animation: tumbleB 44s linear infinite;
+}
+.cube.c {
+  left: 14%;
+  bottom: 12%;
+  width: 10.5%;
+  opacity: 0.8;
+  animation: tumbleA 40s linear infinite reverse;
+}
+.cube.d {
+  right: 16%;
+  bottom: 20%;
+  width: 5%;
+  opacity: 0.4;
+  animation: tumbleB 52s linear infinite;
+}
+
+.streak {
+  position: absolute;
+  height: 2px;
+  border-radius: 2px;
+  transform-origin: left center;
+}
+.streak.r {
+  width: 20%;
+  left: 52%;
+  top: 40%;
+  transform: rotate(-16deg);
+  background: linear-gradient(90deg, rgba(255,90,77,0) 0%, var(--trail-red) 82%,
+    #fff 100%);
+  box-shadow: 0 0 10px 1px rgba(255,90,77,0.7);
+}
+.streak.g {
+  width: 13%;
+  left: 20%;
+  top: 66%;
+  transform: rotate(-8deg);
+  background: linear-gradient(90deg, rgba(125,255,138,0) 0%, var(--trail-green)
+    82%, #fff 100%);
+  box-shadow: 0 0 10px 1px rgba(125,255,138,0.6);
+}
+.streak.v {
+  width: 10%;
+  left: 30%;
+  bottom: 20%;
+  transform: rotate(12deg);
+  background: linear-gradient(90deg, rgba(176,108,255,0) 0%, var(--trail-violet)
+    82%, #fff 100%);
+  box-shadow: 0 0 10px 1px rgba(176,108,255,0.6);
+}
+
+.wordmark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  z-index: 2;
+}
+.wordmark span {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 0.4rem + 2.4vw, 1.6rem);
+  letter-spacing: 0.04em;
+  color: #eef4ff;
+  text-shadow: 0 0 18px rgba(150,190,255,0.65), 0 0 3px rgba(255,255,255,0.5);
+}
+.preview figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: 0.5rem 0.8rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  background: linear-gradient(0deg, rgba(4,6,12,0.85), rgba(4,6,12,0));
+}
+
+/* ---- constraint callout ---- */
+.callout {
+  border: 1px solid var(--panel-edge);
+  border-left: 3px solid var(--glow);
+  border-radius: 6px;
+  background: var(--panel);
+  padding: 1rem 1.15rem;
+}
+.callout .eyebrow {
+  margin-bottom: 0.35rem;
+}
+
+/* ---- locked decisions ---- */
+.decisions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1px;
+  background: var(--panel-edge);
+  border: 1px solid var(--panel-edge);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.decisions div {
+  background: var(--panel);
+  padding: 0.9rem 1rem 1rem;
+}
+.decisions dt {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.decisions dd {
+  margin: 0.35rem 0 0;
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 600;
+  font-size: 1.02rem;
+  color: var(--core);
+}
+.decisions dd + dd {
+  margin-top: 0.3rem;
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--ink-dim);
+}
+
+/* ---- exit sequence: a real ordered sequence, so it gets numbers ---- */
+.sequence {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+.sequence li {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  align-items: start;
+  gap: 0.9rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--panel-edge);
+  border-radius: 6px;
+  background: var(--panel);
+}
+.sequence .n {
+  font-family: "Chakra Petch", monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--glow);
+  border: 1px solid var(--arc);
+  border-radius: 5px;
+  text-align: center;
+  line-height: 2rem;
+}
+.sequence b {
+  color: var(--core);
+  font-weight: 600;
+}
+.sequence .failsafe {
+  border-style: dashed;
+}
+.sequence .failsafe .n {
+  color: var(--ink-faint);
+  border-color: var(--panel-edge);
+}
+
+/* ---- components ---- */
+.parts {
+  display: grid;
+  gap: 0;
+}
+.parts div {
+  padding: 0.95rem 0 0.95rem 1rem;
+  border-left: 2px solid var(--arc);
+}
+.parts div + div {
+  border-top: 1px solid var(--panel-edge);
+}
+.parts h3 {
+  margin: 0 0 0.3rem;
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.parts .tech {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.74rem;
+  color: var(--glow);
+  letter-spacing: 0.02em;
+}
+.parts p {
+  margin-top: 0.35rem;
+  color: var(--ink-dim);
+  font-size: 0.95rem;
+}
+
+/* ---- files table ---- */
+.files {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.files th,
+.files td {
+  text-align: left;
+  padding: 0.6rem 0.7rem;
+  border-bottom: 1px solid var(--panel-edge);
+  vertical-align: top;
+}
+.files th {
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.files td:first-child {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.chip {
+  display: inline-block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+}
+.chip.new {
+  color: var(--trail-green);
+}
+.chip.edit {
+  color: var(--glow);
+}
+.files-scroll {
+  overflow-x: auto;
+}
+
+/* ---- verification checklist ---- */
+/* Real checkbox inputs so the plan-checkboxes Deno server can toggle them and
+   write the state back into this file. Inert but styled otherwise. */
+.check {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+.check li {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+.check label {
+  display: block;
+  position: relative;
+  padding-left: 1.7rem;
+  cursor: pointer;
+}
+.check input {
+  position: absolute;
+  left: 0;
+  top: 0.24rem;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--glow);
+  cursor: pointer;
+}
+.check input:checked + span {
+  color: var(--ink-faint);
+  text-decoration: line-through;
+}
+
+.open dt {
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 600;
+  color: var(--core);
+  margin-top: 0.8rem;
+}
+.open dd {
+  margin: 0.2rem 0 0;
+  color: var(--ink-dim);
+  font-size: 0.95rem;
+}
+
+.action-item {
+  margin-top: calc(var(--step) * 1.7);
+  padding: 1.15rem 1.25rem;
+  border: 1px solid var(--glow);
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(124,198,255,0.08),
+    rgba(124,198,255,0.02));
+  font-size: 0.98rem;
+}
+.action-item strong {
+  color: var(--glow);
+}
+
+hr.rule {
+  border: 0;
+  height: 1px;
+  background: var(--panel-edge);
+  margin: calc(var(--step) * 1.5) 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fog,
+  .cube {
+    animation: none !important;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1.05);
+  }
+  to {
+    transform: translate3d(4%, 3%, 0) scale(1.12);
+  }
+}
+@keyframes tumbleA {
+  from {
+    transform: rotate(20deg) translateX(0);
+  }
+  to {
+    transform: rotate(340deg) translateX(6%);
+  }
+}
+@keyframes tumbleB {
+  from {
+    transform: rotate(-10deg) translateY(0);
+  }
+  to {
+    transform: rotate(310deg) translateY(-8%);
+  }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">BIOS Launcher &middot; Design note</p>
+    <h1>Boot Splash</h1>
+    <p class="lede">
+      A PlayStation&nbsp;2&ndash;style boot screen shown on <code>index.html</code> while the
+      orrery&rsquo;s WebGPU shaders compile &mdash; drifting cubes in a blue nebula, three
+      colored light&nbsp;trails, the wordmark. It never rests: on exit the wordmark fades, the
+      camera flies into the fog past the cubes, and the trails morph to the orrery&rsquo;s node
+      positions.
+    </p>
+
+    <figure class="preview"
+      aria-label="Illustrative frame of the boot splash mid-play">
+      <div class="fog"></div>
+      <div class="cube a"></div>
+      <div class="cube b"></div>
+      <div class="cube c"></div>
+      <div class="cube d"></div>
+      <div class="streak r"></div>
+      <div class="streak g"></div>
+      <div class="streak v"></div>
+      <div class="wordmark"><span>Coldstart Computer Entertainment</span></div>
+      <figcaption>mid-play &mdash; CSS fog + 2D-canvas cubes &amp; trails, no shader</figcaption>
+    </figure>
+  </header>
+
+  <section>
+    <h2>Constraints</h2>
+    <div class="callout">
+      <p class="eyebrow">Why lightweight</p>
+      <p>
+        The splash exists to cover the moment the <strong>orrery&rsquo;s shaders compile</strong>.
+        So it can&rsquo;t itself depend on shader compilation, or it needs its own splash. Everything
+        below is CSS plus a 2D <code>&lt;canvas&gt;</code> &mdash; it paints on the first frame, before
+        any WebGPU work starts.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Decisions</h2>
+    <dl class="decisions">
+      <div>
+        <dt>Fidelity</dt>
+        <dd>Lightweight evocation</dd>
+        <dd>Reads as the PS2 boot without being a pixel recreation.</dd>
+      </div>
+      <div>
+        <dt>Exit timing</dt>
+        <dd>Ready and &ge;&nbsp;3&nbsp;s</dd>
+        <dd>Holds until the orrery is ready <em>and</em> at least a few seconds have passed, then
+          runs the exit choreography.</dd>
+      </div>
+      <div>
+        <dt>Skippable</dt>
+        <dd>No</dd>
+        <dd>Plays to the exit condition. No input listeners.</dd>
+      </div>
+      <div>
+        <dt>Frequency</dt>
+        <dd>Once per session</dd>
+        <dd><code>sessionStorage</code> gate; skipped on back-navigation.</dd>
+      </div>
+      <div>
+        <dt>Wordmark</dt>
+        <dd>Coldstart Computer Entertainment</dd>
+        <dd>DBA <b>Coldstart</b>; subsidiary operated by Snow Developments,&nbsp;LLC. The
+          <code>about.html</code> credit is a separate follow-up.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section>
+    <p class="eyebrow">01 &rarr; 06</p>
+    <h2>Splash Sequence</h2>
+    <p style="margin-block: 8px;">The splash markup sits first in <code>&lt;body&gt;</code>, so it covers everything from the
+      first paint. The orrery renders live behind the splash the whole time. The wordmark is a
+      self-contained beat near the middle; the exit is a separate later beat that <code>splash.js</code>
+      holds back until <b>both</b> <code>orrery:ready</code> has fired <b>and</b> at least <b>3&nbsp;s</b>
+      have passed since splash start. Exit steps&nbsp;4&ndash;5 start together.</p>
+    <ol class="sequence">
+      <li><span class="n">1</span><span><b>Wordmark fades in.</b> Almost immediately &mdash; first frame, ~200&nbsp;ms (<code>.splash--lit</code>).</span></li>
+      <li><span class="n">2</span><span><b>Wordmark holds ~1&nbsp;s</b>, then <b>fades out over ~1.5&nbsp;s</b> (<code>.splash--dim</code>, added ~1&nbsp;s in) &mdash; gone by ~2.5&nbsp;s, well before the exit. It takes no part in <code>.splash--out</code>.</span></li>
+      <li><span class="n">3</span><span><b>Gate.</b> Once <code>orrery:ready</code> and the 3&nbsp;s floor are both met, the exit begins (<code>.splash--out</code>).</span></li>
+      <li><span class="n">4</span><span><b>Camera flies into the fog &mdash; 0.75&nbsp;s.</b> The fog scales up hard toward the viewer; the cubes blow past outward.</span></li>
+      <li><span class="n">5</span><span><b>Trails morph to the orrery &mdash; 0.75&nbsp;s.</b> Starts with step&nbsp;4. Each of the three trails eases from its live position to one of the orrery&rsquo;s node <em>initial positions</em>, which <code>splash.js</code> computes from the orrery layout at that instant (time-based: the 8 nodes sit on the tilted orbit rotated by the current spin). Drawn additively.</span></li>
+      <li><span class="n">6</span><span><b>Splash exits.</b> The <code>.splash</code> layer fades over ~1.5&nbsp;s; on <code>transitionend</code> it gets <code>hidden</code> and the canvas loop stops &mdash; the orrery, already spinning, is all that&rsquo;s left.</span></li>
+      <li class="failsafe">
+        <span></span>
+        <span><b>Failsafe:</b> Hard timeout (<code>7s</code>) starts the choreography even if <code>orrery:ready</code> never arrives. The splash can never get stuck.</span>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Components</h2>
+    <div class="parts">
+      <div>
+        <h3>Fog</h3>
+        <span
+          class="tech">CSS &middot; layered radial-gradients + SVG feTurbulence</span>
+        <p>Irregular blue gradient blobs over black with slow drift keyframes, warped by an animated
+          <code>feDisplacementMap</code>, with a second wispy <code>feTurbulence</code> cloud multiplied
+          into the fog (dark surround stays dark) and screened back as highlights &mdash; so it roils
+          instead of reading as banded CSS. No canvas, no shader.</p>
+      </div>
+      <div>
+        <h3>Cubes</h3>
+        <span class="tech">2D canvas &middot; ~7 instances</span>
+        <p>Dark isometric hex outlines with faint face shading, drifting across with per-cube
+          tumble and depth &mdash; size, opacity and blur keyed to a z value, edge-wrapping. Canonically
+          the &ldquo;memories&rdquo; from save data; here just a fixed count.</p>
+      </div>
+      <div>
+        <h3>Light trails</h3>
+        <span class="tech">2D canvas &middot; same context as cubes</span>
+        <p>Three comet streaks &mdash; <span class="mono" style="color:var(--trail-red)">red</span>,
+          <span class="mono" style="color:var(--trail-green)">green</span>,
+          <span class="mono" style="color:var(--trail-violet)">violet</span>, matched to the reference frame &mdash;
+          firing across on a stagger with fading tails, then respawning after a delay. On exit each
+          eases over ~0.75&nbsp;s to one of the orrery&rsquo;s node initial positions &mdash; computed
+          from the orrery layout at that instant, so it&rsquo;s time-based &mdash; drawn additively.</p>
+      </div>
+      <div>
+        <h3>Wordmark</h3>
+        <span
+          class="tech">CSS text &middot; in on the first frame, out ~1&ndash;2.5&nbsp;s in</span>
+        <p>&ldquo;Coldstart Computer Entertainment&rdquo; in plain letter-spaced type with a soft blue
+          glow &mdash; the way the console drew its full maker name, not a logo lockup. A
+          self-contained mid-sequence beat: in, a ~1&nbsp;s hold, then a ~1.5&nbsp;s fade-out &mdash;
+          done before the exit and no part of it. <code>coldstart</code> is the term for a boot from
+          fully powered-off state, no cached anything &mdash; which is what this screen is.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Files</h2>
+    <div class="files-scroll">
+      <table class="files">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Change</th>
+            <th>What</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>design/splash.js</td>
+            <td><span class="chip new">new</span></td>
+            <td>Plain ES module. sessionStorage gate; the mid-sequence wordmark beat (<code>.splash--lit</code> on rAF, <code>.splash--dim</code> after ~1&nbsp;s); 2D-canvas cube + trail animation; the exit gate; the exit choreography &mdash; camera fly-in, and each trail eased to a distinct orrery node from <code>globalThis.orrery.nodePositions()</code> (converge-to-core + flash when that returns <code>null</code>); reduced-motion path.</td>
+          </tr>
+          <tr>
+            <td>design/index.html</td>
+            <td><span class="chip edit">edit</span></td>
+            <td><code>.splash</code> markup as first child of <code>&lt;body&gt;</code>; hidden inline <code>&lt;svg&gt;</code> turbulence filter; <code>&lt;script type="module" src="splash.js"&gt;</code> after <code>orrery.js</code>.</td>
+          </tr>
+          <tr>
+            <td>design/launcher.css</td>
+            <td><span class="chip edit">edit</span></td>
+            <td><code>.splash</code> layer + ~1.5&nbsp;s opacity fade, <code>.splash--lit</code> / <code>.splash--dim</code> wordmark in/out, <code>.splash--out</code> (fog scales past the camera), <code>.splash-fog</code> / <code>.splash-cubes</code> / <code>.splash-word</code>, reduced-motion block.</td>
+          </tr>
+          <tr>
+            <td>design/orrery.js</td>
+            <td><span class="chip edit">edit</span></td>
+            <td>Dispatch <code>orrery:ready</code> once after the first submit and inside <code>fail()</code>; hoist <code>RADIUS</code> / <code>SPIN_RATE</code> and a <code>spinNow()</code> shared by the frame loop; export <code>globalThis.orrery.nodePositions()</code> &mdash; live node centres in viewport px, or <code>null</code> in fallback.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Verification</h2>
+    <p>It&rsquo;s a mockup, so verification is in the browser preview:</p>
+    <ul class="check">
+      <li><label><input type="checkbox" checked> <span>Serve <code>design/</code>, load <code>index.html</code> &mdash; splash covers from first paint; wordmark fades in almost immediately; fog roils, cubes drift, trails streak.</span></label></li>
+      <li><label><input type="checkbox"> <span>Wordmark fades out mid-sequence (~1&ndash;2.5&nbsp;s in), gone before the exit. Then the splash holds to &ge;&nbsp;3&nbsp;s; the exit runs camera fly-in + trail morph (0.75&nbsp;s) and the layer fades over ~1.5&nbsp;s.</span></label></li>
+      <li><label><input type="checkbox" checked> <span>Trail endpoints land on the actual orrery nodes (check at a couple of different clock times &mdash; positions are time-based).</span></label></li>
+      <li><label><input type="checkbox" checked> <span>Reload &mdash; splash skipped via <code>sessionStorage</code>. Settings &rsaquo; Debug &middot; Reset Splash clears it.</span></label></li>
+      <li><label><input type="checkbox" checked> <span>Clear <code>sessionStorage</code>, emulate <code>prefers-reduced-motion</code> &mdash; static hold, then fade.</span></label></li>
+      <li><label><input type="checkbox"> <span>Console clean.</span></label></li>
+    </ul>
+  </section>
+
+  <section class="open">
+    <h2>Future Work</h2>
+    <dl>
+      <dt>Video reference</dt>
+      <dd>A few seconds of the real boot would let me tune cube-drift speed, trail cadence, and the exit &mdash; fade vs. camera pull-back through the fog. Buildable without it; adjustable after.</dd>
+    </dl>
+  </section>
+
+  <hr class="rule">
+
+  <p class="action-item">
+    <strong>Implement</strong> this&semi; then verify the four files above, verified in the
+    preview, with a screenshot back. The video reference is optional and can land after.
+  </p>
+</div>

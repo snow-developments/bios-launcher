@@ -64,8 +64,9 @@ async function start(): Promise<() => void> {
   });
   const { device, context, format } = gpu;
   const initialSize = syncCanvasSize(canvas, device);
-  const particleCount =
-    initialSize.width < 900 || initialSize.height < 700 ? 12_000 : 28_000;
+  const particleCount = initialSize.width < 900 || initialSize.height < 700
+    ? 12_000
+    : 28_000;
   const initialParticles = createParticles(
     particleCount,
     initialSize.width,
@@ -89,7 +90,11 @@ async function start(): Promise<() => void> {
   });
 
   const [computeModule, renderModule] = await Promise.all([
-    createCheckedShaderModule(device, "particle compute shader", COMPUTE_SHADER),
+    createCheckedShaderModule(
+      device,
+      "particle compute shader",
+      COMPUTE_SHADER,
+    ),
     createCheckedShaderModule(device, "particle render shader", RENDER_SHADER),
   ]);
   const [computePipeline, renderPipeline] = await Promise.all([
@@ -136,7 +141,7 @@ async function start(): Promise<() => void> {
         { binding: 1, resource: { buffer: source } },
         { binding: 2, resource: { buffer: stateBuffers[1 - index]! } },
       ],
-    }),
+    })
   );
   const renderBindGroups = stateBuffers.map((buffer, index) =>
     device.createBindGroup({
@@ -146,7 +151,7 @@ async function start(): Promise<() => void> {
         { binding: 0, resource: { buffer: paramsBuffer } },
         { binding: 1, resource: { buffer } },
       ],
-    }),
+    })
   );
 
   const params = new ArrayBuffer(PARAMS_SIZE_BYTES);

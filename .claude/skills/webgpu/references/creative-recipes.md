@@ -1,6 +1,7 @@
 # Creative and simulation recipes
 
-Use this reference when a request describes an effect or system rather than a specific WebGPU API.
+Use this reference when a request describes an effect or system rather than a
+specific WebGPU API.
 
 ## Start with a visual or numerical sentence
 
@@ -12,9 +13,11 @@ Describe:
 - interaction: pointer force, painting, camera, controls;
 - budget: count, resolution, steps per second, target devices.
 
-Example: “Twenty thousand cyan particles orbit a soft pointer field and leave slowly diffusing violet trails on desktop WebGPU.”
+Example: “Twenty thousand cyan particles orbit a soft pointer field and leave
+slowly diffusing violet trails on desktop WebGPU.”
 
-Translate that sentence into state resources and a pass graph before writing shaders.
+Translate that sentence into state resources and a pass graph before writing
+shaders.
 
 ## Particle field
 
@@ -27,7 +30,9 @@ Start with:
 - instanced quads or sprites;
 - one small parameter uniform.
 
-Tune initial geometry and velocity before adding forces. Add spatial bins before adding large-radius neighbor behavior. Add a GPU-compacted local query for pointer tools instead of reading every particle.
+Tune initial geometry and velocity before adding forces. Add spatial bins before
+adding large-radius neighbor behavior. Add a GPU-compacted local query for
+pointer tools instead of reading every particle.
 
 Copy the complete implementation from [the starter](../assets/starter/).
 
@@ -41,9 +46,12 @@ Use:
 - a fixed simulation cadence decoupled from rendering;
 - a fullscreen render pass reading the latest generation.
 
-For reaction-diffusion, write both channels on every path and use an initial state that can evolve. For continuous kernels, make neighborhood radius and grid resolution explicit performance controls.
+For reaction-diffusion, write both channels on every path and use an initial
+state that can evolve. For continuous kernels, make neighborhood radius and grid
+resolution explicit performance controls.
 
-Inspect startup, early evolution, and settled behavior. A valid shader can still receive an inert seed or converge to a featureless state.
+Inspect startup, early evolution, and settled behavior. A valid shader can still
+receive an inert seed or converge to a featureless state.
 
 ## Trails and feedback
 
@@ -54,7 +62,9 @@ Use two scene/history textures:
 3. present B;
 4. swap.
 
-Keep the history format deliberate. Half-float or other extended formats may need optional capability checks; an `rgba8unorm` or render-pass fallback is often more portable.
+Keep the history format deliberate. Half-float or other extended formats may
+need optional capability checks; an `rgba8unorm` or render-pass fallback is
+often more portable.
 
 Do not sample and write the same texture subresource in one pass.
 
@@ -70,13 +80,19 @@ Split the solver into named passes such as:
 6. correct velocities;
 7. render.
 
-Keep intermediate state sized from the actual program contract. If generated modules add per-element state, regenerate allocation stride with the shader rather than reserving a guessed fixed amount.
+Keep intermediate state sized from the actual program contract. If generated
+modules add per-element state, regenerate allocation stride with the shader
+rather than reserving a guessed fixed amount.
 
 ## Image processing
 
-Use a sampled input texture and separate output texture. Dispatch in 2D with bounds checks. Introduce workgroup tiles only if neighboring samples are reused enough to offset halo loading and barriers.
+Use a sampled input texture and separate output texture. Dispatch in 2D with
+bounds checks. Introduce workgroup tiles only if neighboring samples are reused
+enough to offset halo loading and barriers.
 
-For multiple filters, prefer a small pass graph with reusable ping-pong textures. Fuse passes only after measuring bandwidth and ensuring fusion does not obscure correctness or prevent reuse.
+For multiple filters, prefer a small pass graph with reusable ping-pong
+textures. Fuse passes only after measuring bandwidth and ensuring fusion does
+not obscure correctness or prevent reuse.
 
 ## Modular shader systems
 
@@ -89,7 +105,10 @@ Define a descriptor per module:
 - entry-point contribution;
 - rebuild triggers versus realtime uniform updates.
 
-Compose a deterministic binding table and emit source maps or line annotations for generated WGSL. Treat changes to buffer shape, bindings, entry points, or workgroup memory as structural rebuilds; treat numeric parameters as uniform/storage updates.
+Compose a deterministic binding table and emit source maps or line annotations
+for generated WGSL. Treat changes to buffer shape, bindings, entry points, or
+workgroup memory as structural rebuilds; treat numeric parameters as
+uniform/storage updates.
 
 ## Iterate in layers
 
@@ -102,4 +121,5 @@ Compose a deterministic binding table and emit source maps or line annotations f
 7. Inspect startup and steady state.
 8. Increase count/resolution only after profiling.
 
-Creative success requires coherent motion or evolution, not merely error-free GPU commands.
+Creative success requires coherent motion or evolution, not merely error-free
+GPU commands.

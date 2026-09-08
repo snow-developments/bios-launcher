@@ -1,6 +1,7 @@
 # WGSL data layout
 
-Use this reference before creating uniform or storage buffers, packing data in JavaScript, or diagnosing corrupt values.
+Use this reference before creating uniform or storage buffers, packing data in
+JavaScript, or diagnosing corrupt values.
 
 ## Contents
 
@@ -17,21 +18,24 @@ WGSL layout is recursive. For a host-shareable type:
 - a member offset is `roundUp(memberAlignment, previousOffset + previousSize)`;
 - struct alignment is the maximum member alignment;
 - struct size is `roundUp(structAlignment, endOfLastMember)`;
-- array stride is `roundUp(elementAlignment, elementSize)`, with additional uniform constraints on the portable baseline.
+- array stride is `roundUp(elementAlignment, elementSize)`, with additional
+  uniform constraints on the portable baseline.
 
 Common `f32`, `i32`, and `u32` shapes:
 
-| Type | Alignment | Size |
-| --- | ---: | ---: |
-| scalar | 4 | 4 |
-| `vec2<T>` | 8 | 8 |
-| `vec3<T>` | 16 | 12 |
-| `vec4<T>` | 16 | 16 |
-| `mat2x2<f32>` | 8 | 16 |
-| `mat3x3<f32>` | 16 | 48 |
-| `mat4x4<f32>` | 16 | 64 |
+| Type          | Alignment | Size |
+| ------------- | --------: | ---: |
+| scalar        |         4 |    4 |
+| `vec2<T>`     |         8 |    8 |
+| `vec3<T>`     |        16 |   12 |
+| `vec4<T>`     |        16 |   16 |
+| `mat2x2<f32>` |         8 |   16 |
+| `mat3x3<f32>` |        16 |   48 |
+| `mat4x4<f32>` |        16 |   64 |
 
-A `vec3<f32>` occupies 12 bytes but requires 16-byte alignment. The next scalar may use offset 12 in a structure when the address-space constraints permit it; an array of `vec3<f32>` has a 16-byte stride.
+A `vec3<f32>` occupies 12 bytes but requires 16-byte alignment. The next scalar
+may use offset 12 in a structure when the address-space constraints permit it;
+an array of `vec3<f32>` has a 16-byte stride.
 
 Use `u32` for host-written flags rather than depending on host boolean packing.
 
@@ -55,7 +59,8 @@ const stride = floatsPerParticle * Float32Array.BYTES_PER_ELEMENT;
 const data = new Float32Array(count * floatsPerParticle);
 ```
 
-Do not derive byte stride from a TypeScript object shape. Define the binary schema independently and document it next to both packer and WGSL.
+Do not derive byte stride from a TypeScript object shape. Define the binary
+schema independently and document it next to both packer and WGSL.
 
 ## Mixed uniform example
 
@@ -86,19 +91,24 @@ view.setUint32(28, count, true);
 device.queue.writeBuffer(paramsBuffer, 0, bytes);
 ```
 
-A `Float32Array` is not appropriate for fields that WGSL reads as integers; numeric equality does not imply identical bits.
+A `Float32Array` is not appropriate for fields that WGSL reads as integers;
+numeric equality does not imply identical bits.
 
 ## Uniform-specific constraints
 
-Storage buffers use natural host-shareable layout. Uniform buffers have additional address-space constraints in the portable core:
+Storage buffers use natural host-shareable layout. Uniform buffers have
+additional address-space constraints in the portable core:
 
 - fixed-size array element stride is a multiple of 16 bytes;
 - nested structure spacing may need 16-byte alignment;
 - runtime-sized arrays are not normal uniform members.
 
-Use `@align(...)` or `@size(...)` when the intended binary contract requires explicit padding, or pack uniform arrays into `vec4` slots. Do not call these rules “std140”; follow the current WGSL address-space layout rules.
+Use `@align(...)` or `@size(...)` when the intended binary contract requires
+explicit padding, or pack uniform arrays into `vec4` slots. Do not call these
+rules “std140”; follow the current WGSL address-space layout rules.
 
-Newer language features can relax some uniform constraints. Gate those features explicitly and keep a portable layout unless the product controls its runtime.
+Newer language features can relax some uniform constraints. Gate those features
+explicitly and keep a portable layout unless the product controls its runtime.
 
 ## Runtime-sized arrays
 
@@ -111,7 +121,9 @@ struct Records {
 };
 ```
 
-Use `arrayLength(&records.values)` only where the bound buffer range determines the runtime count. Still pass an explicit logical count when the allocation has spare capacity.
+Use `arrayLength(&records.values)` only where the bound buffer range determines
+the runtime count. Still pass an explicit logical count when the allocation has
+spare capacity.
 
 ## Alignment outside WGSL structs
 
@@ -119,9 +131,15 @@ Also verify API-level constraints:
 
 - `queue.writeBuffer` buffer offsets and byte counts use 4-byte granularity.
 - `copyBufferToBuffer` offsets and size use 4-byte granularity.
-- Dynamic uniform offsets are multiples of `device.limits.minUniformBufferOffsetAlignment`.
-- Dynamic storage offsets are multiples of `device.limits.minStorageBufferOffsetAlignment`.
-- Buffer-to-texture copies normally require `bytesPerRow` to be a multiple of 256.
-- Buffer binding sizes must fit the relevant device limit and the actual allocation.
+- Dynamic uniform offsets are multiples of
+  `device.limits.minUniformBufferOffsetAlignment`.
+- Dynamic storage offsets are multiples of
+  `device.limits.minStorageBufferOffsetAlignment`.
+- Buffer-to-texture copies normally require `bytesPerRow` to be a multiple
+  of 256.
+- Buffer binding sizes must fit the relevant device limit and the actual
+  allocation.
 
-Use a small layout table or tested packer for every shared struct. When generated WGSL changes structure shape, regenerate the packer or fail loudly rather than silently reusing the old stride.
+Use a small layout table or tested packer for every shared struct. When
+generated WGSL changes structure shape, regenerate the packer or fail loudly
+rather than silently reusing the old stride.

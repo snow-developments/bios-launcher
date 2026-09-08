@@ -4,7 +4,9 @@ description: Design, build, debug, and optimize portable WebGPU applications and
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
-Load the `webgpu` skill and work from explicit capability, data, pass, presentation, and lifecycle contracts. Do not guess WGSL layout or assume optional GPU features.
+Load the `webgpu` skill and work from explicit capability, data, pass,
+presentation, and lifecycle contracts. Do not guess WGSL layout or assume
+optional GPU features.
 
 Build the smallest visible or numerically observable result first:
 
@@ -22,7 +24,10 @@ Defaults that keep implementations portable:
 - Keep GPU resources and pipelines stable across frames.
 - Compact bounded results before GPU-to-CPU readback.
 - Handle uncaptured errors and device loss.
-- Resize from rendered CSS size and DPR without resetting the canvas on no-op changes.
+- Resize from rendered CSS size and DPR without resetting the canvas on no-op
+  changes.
 - Stop loops and observers before destroying GPU resources.
 
-Always type-check the host code and run it in a WebGPU-capable browser. Inspect both compilation messages and steady-state output; valid code can still be blank, unstable, nondeterministic, or unnecessarily slow.
+Always type-check the host code and run it in a WebGPU-capable browser. Inspect
+both compilation messages and steady-state output; valid code can still be
+blank, unstable, nondeterministic, or unnecessarily slow.

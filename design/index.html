@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BIOS Launcher — Design Concept</title>
+    <link rel="stylesheet" href="launcher.css">
+  </head>
+  <body>
+    <!-- Coldstart boot splash: covers the page from first paint while the orrery's
+         shaders compile, then recedes into the menu. Shown once per session. -->
+    <div class="splash" id="splash" aria-hidden="true">
+      <div class="splash-fog"></div>
+      <canvas class="splash-cubes"></canvas>
+      <p class="splash-word">Coldstart Computer Entertainment</p>
+    </div>
+    <svg class="splash-defs" aria-hidden="true">
+      <!-- Fog roil: a large-scale warp of the gradient layers, plus a real
+           fractal-noise cloud screened on top so it doesn't read as banded CSS. -->
+      <filter id="splash-fog-warp" x="-40%" y="-40%" width="180%" height="180%"
+        color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.0060 0.011"
+          numOctaves="3" seed="7" result="warp">
+          <animate attributeName="baseFrequency" dur="19s"
+            repeatCount="indefinite"
+            calcMode="spline" keyTimes="0;0.5;1"
+            keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
+            values="0.0060 0.011;0.0094 0.0072;0.0060 0.011" />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="warp" scale="62"
+          xChannelSelector="R" yChannelSelector="G" result="disp" />
+        <!-- Wispy cloud texture, multiplied into the warped fog so the dark
+             surround stays dark, then screened back as soft highlights. -->
+        <feTurbulence type="fractalNoise" baseFrequency="0.010 0.015"
+          numOctaves="3" seed="23" result="clouds" />
+        <feColorMatrix in="clouds" type="matrix" result="cloudTint"
+          values="0 0 0 0 0.50
+                             0 0 0 0 0.64
+                             0 0 0 0 0.98
+                             0 0 0 0.75 0.10" />
+        <feComposite in="cloudTint" in2="disp" operator="arithmetic"
+          k1="1.15" k2="0" k3="0" k4="0" result="cloudMod" />
+        <feBlend in="disp" in2="cloudMod" mode="screen" />
+      </filter>
+    </svg>
+
+    <div class="corners" id="corners" aria-hidden="true">
+      <span class="clock-date">0000/00/00</span>
+      <span class="clock-time">00:00:00</span>
+    </div>
+
+    <div class="shell">
+      <main>
+        <div class="console">
+          <!-- PS2 BIOS main-menu motif: the orrery. Nodes orbiting a wireframe
+               core on a tilted 3D plane, rendered with WebGPU; one node is lit
+               for the current hour. Falls back to a static CSS core if WebGPU
+               is unavailable. -->
+          <canvas class="orrery" aria-hidden="true"></canvas>
+
+          <div class="right">
+            <nav class="menu" aria-label="Main menu">
+              <a class="active" data-action="games" href="games.html">Games</a>
+              <a data-action="settings" href="settings.html">Settings</a>
+              <a data-action="about" href="about.html">About System</a>
+            </nav>
+
+            <div class="tile" id="tile" aria-labelledby="shadowOfTheColossus"
+              aria-details="Press Enter to open the library."
+              aria-live="polite">
+              <small>LAST PLAYED</small>
+              <h2 id="shadowOfTheColossus">Shadow of the Colossus</h2>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer>
+        <span class="hint">
+        <span class="glyph cross" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2.6 2.6 9.4 9.4M9.4 2.6 2.6 9.4"/></svg></span>
+        Enter
+      </span>
+        <span class="hint">
+        <span class="glyph triangle" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 2.3 10.4 9.7H1.6Z"/></svg></span>
+        Version
+      </span>
+      </footer>
+    </div>
+
+    <div id="notice">Selection acknowledged.</div>
+
+    <script src="launcher.js"></script>
+    <script type="module" src="orrery.js"></script>
+    <script type="module" src="splash.js"></script>
+    <script>
+    const tile = document.querySelector("#tile");
+    Bios.listNav(".menu a", {
+      onMove(el) {
+        tile.hidden = el.dataset.action !== "games";
+      },
+      onActivate(el) {
+        const href = el.getAttribute("href");
+        if (href && href !== "#") location.href = href;
+        else Bios.notify("Selection acknowledged.");
+      },
+    });
+
+    // Version shortcut: triangle button / V key
+    const version = () => {
+      location.href = "about.html";
+    };
+    Bios.onPad("triangle", version);
+    addEventListener("keydown", (e) => {
+      if (e.key === "v" || e.key === "V") version();
+    });
+    </script>
+  </body>
+</html>
