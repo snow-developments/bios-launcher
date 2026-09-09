@@ -69,3 +69,8 @@ x86/
 
 # Publish Web Output
 *.[Pp]ublish.xml
+
+# Local SQLite databases (dev + EF design-time)
+*.db
+*.db-shm
+*.db-wal

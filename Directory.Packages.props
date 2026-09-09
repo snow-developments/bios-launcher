@@ -1,0 +1,49 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <!-- Persistence: EF Core SQLite (design/scaffold.md "Package strategy") -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
+  </ItemGroup>
+
+  <!-- Logging: application and platform layers only, never Bios.Core -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.11" />
+    <PackageVersion Include="NLog.Extensions.Logging" Version="6.2.0" />
+  </ItemGroup>
+
+  <!-- Windowing, input, and WebGPU: Bios.Platform only -->
+  <ItemGroup>
+    <PackageVersion Include="Silk.NET.Windowing" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.Windowing.Common" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.Windowing.Glfw" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.Input" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.Input.Glfw" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.GLFW" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.WebGPU" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.WebGPU.Native.WGPU" Version="2.23.0" />
+  </ItemGroup>
+
+  <!-- ProGPU renderer (published preview packages, not a source checkout) -->
+  <ItemGroup>
+    <PackageVersion Include="ProGPU.Backend" Version="0.1.0-preview.62" />
+    <PackageVersion Include="ProGPU.Scene" Version="0.1.0-preview.62" />
+    <PackageVersion Include="ProGPU.Vector" Version="0.1.0-preview.62" />
+    <PackageVersion Include="ProGPU.Text" Version="0.1.0-preview.62" />
+    <PackageVersion Include="ProGPU.Compute" Version="0.1.0-preview.62" />
+  </ItemGroup>
+
+  <!-- Test stack -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
+  </ItemGroup>
+
+</Project>

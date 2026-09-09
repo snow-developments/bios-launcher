@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Bios.Core/Bios.Core.csproj" />
+    <Project Path="src/Bios.Data/Bios.Data.csproj" />
+    <Project Path="src/Bios.Launcher/Bios.Launcher.csproj" />
+    <Project Path="src/Bios.Platform/Bios.Platform.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Bios.Core.Tests/Bios.Core.Tests.csproj" />
+    <Project Path="tests/Bios.Data.Tests/Bios.Data.Tests.csproj" />
+    <Project Path="tests/Bios.Launcher.Tests/Bios.Launcher.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -21,7 +21,7 @@ Process execution is intentionally deferred. Selecting a game records a
 ## Project layout
 
 ```text
-BiosLauncher.sln
+BiosLauncher.slnx
   Directory.Packages.props
   .config/
     dotnet-tools.json
@@ -227,7 +227,7 @@ and orderly shutdown.
 
 The Windows acceptance path must:
 
-1. Restore and build the solution with `dotnet build BiosLauncher.sln`.
+1. Restore and build the solution with `dotnet build BiosLauncher.slnx`.
 2. Apply migrations with
    `dotnet ef database update --project src/Bios.Data --startup-project
    src/Bios.Launcher`;
