@@ -23,12 +23,20 @@ Conventions for the `design/` mockups ([[design-is-mockups]]):
   `display: inline-grid; place-items: center` — NOT a font glyph char inside a
   circle (that produced an "awful padding" bug). `.glyph` circle ~`1.55em`,
   inner `svg` ~`.6em`, stroked with `currentColor`.
-- **Real 3D CSS for orbital motifs.** `perspective` on the parent;
-  `transform-style: preserve-3d` + a base `rotateX(...)` tilt on the orbit
-  wrapper; keyframes must carry the tilt through the spin
-  (`rotateX(Ndeg) rotateZ(0 → 360deg)`, not a bare `rotateZ`); child nodes
-  placed with `rotateZ(var(--n)*Ndeg) translateY(-r)` inside the tilted plane.
-  Used on the index node ring and the settings 12-pillar assembly.
+- **Orbital motifs.** The `index.html` node ring is now a **WebGPU canvas**
+  (`design/orrery.js`, the "orrery"), not CSS — 8 nodes + 2 wireframe rings on
+  a tilted plane in WGSL, with a `.orrery--fallback` static CSS core when
+  `requestAdapter()` fails. It fires an `orrery:ready` DOM event and exposes
+  `globalThis.orrery.nodePositions()` (viewport-px node centres, or `null` in
+  fallback) for other scripts. The **settings 12-pillar assembly is still real
+  3D CSS**: `perspective` on the parent; `transform-style: preserve-3d` + a
+  base `rotateX(...)` tilt on the wrapper; keyframes carry the tilt through the
+  spin (`rotateX(Ndeg) rotateZ(0 → 360deg)`, not a bare `rotateZ`); children
+  placed with `rotateZ(var(--i)*30deg) translateY(-r)` inside the tilted plane.
+- **`design/plans/`** holds design-note docs (HTML/Markdown). The
+  `plan-checkboxes` skill (`.claude/skills/plan-checkboxes/server.ts`) serves
+  them with live checkboxes that persist to the file — run with
+  `deno run --allow-read --allow-write --allow-net`.
 - **Every page** handles `prefers-reduced-motion` (kill spin, keep static state)
   and has a mobile `@media (max-width: 720px)` breakpoint (stack columns,
   static-position absolute panels).
