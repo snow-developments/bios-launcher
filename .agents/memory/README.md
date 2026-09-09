@@ -28,3 +28,7 @@ Durable, cross-agent facts about this repo. Read these at session start.
   artifacts with real formatting, never a chat wall of text
 - [Move files literally](move-files-literally.md) — git mv / mv, never
   rewrite-to-move
+- [Commit conventions](commit-conventions.md) — commit/stash/PR wording lives in
+  the writing-commit-messages skill; invoke it before drafting a message
+- [Authoring for Chance](authoring-for-chance.md) — encoding his conventions:
+  mine chances repos, grill with AskUserQuestion, mirror skill to .agents/skills
