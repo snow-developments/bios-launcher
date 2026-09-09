@@ -172,8 +172,7 @@ fn ring_vs(@builtin(vertex_index) vi: u32,
     // A more upright ring, yawed so it visibly crosses the first.
     let x = cos(a) * r * 0.62;
     let y = sin(a) * r;
-    p = vec3f(x, y * cos(u.tilt) + 0.0, 0.0);
-    p.y = y * 0.9 - cos(a) * r * 0.18;
+    p = vec3f(x, y * 0.9 - cos(a) * r * 0.18, 0.0);
   }
   var o: RingOut;
   o.pos = vec4f(p.x / max(u.aspect, 0.0001), p.y, 0.0, 1.0);
@@ -202,7 +201,10 @@ async function main() {
   }
   device.lost.then((info) => {
     if (info.reason !== "destroyed") fail(`device lost: ${info.message}`);
-    stop();
+    teardown();
+  });
+  device.addEventListener("uncapturederror", (e) => {
+    console.error(`[orrery] uncaptured: ${e.error.message}`);
   });
 
   const ctx = canvas.getContext("webgpu");
@@ -269,7 +271,8 @@ async function main() {
     if (canvas.width !== w) canvas.width = w;
     if (canvas.height !== h) canvas.height = h;
   }
-  new ResizeObserver(resize).observe(canvas);
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(canvas);
   resize();
 
   function frame(now) {
@@ -309,23 +312,38 @@ async function main() {
   }
 
   let raf = 0;
+  let torndown = false;
   function stop() {
     cancelAnimationFrame(raf);
     raf = 0;
   }
   function start() {
-    if (!raf) raf = requestAnimationFrame(frame);
+    if (!raf && !torndown) raf = requestAnimationFrame(frame);
+  }
+  // Release GPU-adjacent resources once: stop the loop, drop observers and
+  // listeners, and unconfigure the canvas context we own.
+  function teardown() {
+    if (torndown) return;
+    torndown = true;
+    stop();
+    resizeObserver.disconnect();
+    reduceMotion.removeEventListener?.("change", onReduceMotionChange);
+    try {
+      ctx.unconfigure();
+    } catch { /* already gone */ }
+  }
+
+  function onReduceMotionChange() {
+    stop();
+    if (!torndown) requestAnimationFrame(frame);
   }
 
   document.addEventListener("visibilitychange", () => {
     if (document.hidden || reduceMotion.matches) stop();
     else start();
   });
-  addEventListener("pagehide", stop);
-  reduceMotion.addEventListener?.("change", () => {
-    stop();
-    requestAnimationFrame(frame);
-  });
+  addEventListener("pagehide", teardown);
+  reduceMotion.addEventListener?.("change", onReduceMotionChange);
 
   requestAnimationFrame(frame); // always paint at least one frame
 }
