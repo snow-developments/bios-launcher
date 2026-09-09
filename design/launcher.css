@@ -628,3 +628,30 @@ footer.wide {
     gap: 10px 22px;
   }
 }
+
+/* ---- page transitions ---------------------------------------------------
+   Cross-fade between the four static pages. The shell fades in on every load
+   (CSS only); launcher.js adds `.is-leaving` to <html> just before it swaps
+   location, fading the shell out. Keep PAGE_FADE_MS in launcher.js == .24s. */
+.shell {
+  animation: shell-in .34s ease both;
+}
+@keyframes shell-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+html.is-leaving .shell {
+  animation: none;
+  opacity: 0;
+  transition: opacity .24s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell {
+    animation: none;
+  }
+  html.is-leaving .shell {
+    opacity: 1;
+    transition: none;
+  }
+}

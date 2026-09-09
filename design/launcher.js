@@ -152,6 +152,43 @@
     };
   };
 
+  /* ---- page transitions: fade the shell out, then swap the document ----
+     Every internal navigation goes through Bios.navigate so the cross-fade
+     is consistent. Keep PAGE_FADE_MS in sync with `.is-leaving .shell` in
+     launcher.css (.24s). Honours prefers-reduced-motion (instant swap). */
+  const PAGE_FADE_MS = 240;
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  Bios.navigate = (url) => {
+    if (!url || url === "#" || Bios._leaving) return;
+    if (reducedMotion.matches) {
+      location.href = url;
+      return;
+    }
+    Bios._leaving = true;
+    document.documentElement.classList.add("is-leaving");
+    setTimeout(() => (location.href = url), PAGE_FADE_MS);
+  };
+
+  function initTransitions() {
+    // Intercept clicks on same-origin, non-hash links so they cross-fade.
+    addEventListener("click", (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey ||
+        e.shiftKey || e.altKey) return;
+      const a = e.target.closest && e.target.closest("a[href]");
+      if (!a || a.target === "_blank") return;
+      const href = a.getAttribute("href");
+      if (!href || href.startsWith("#") || /^[a-z]+:/i.test(href)) return;
+      e.preventDefault();
+      Bios.navigate(href);
+    });
+    // Restore state if the page comes back from the bfcache.
+    addEventListener("pageshow", (e) => {
+      if (!e.persisted) return;
+      Bios._leaving = false;
+      document.documentElement.classList.remove("is-leaving");
+    });
+  }
+
   /* ---- back navigation via <body data-back="..."> ---- */
   function initBack() {
     const target = document.body.dataset.back;
@@ -159,17 +196,16 @@
     addEventListener("keydown", (e) => {
       if (e.key === "Escape" || e.key === "Backspace") {
         e.preventDefault();
-        location.href = target;
+        Bios.navigate(target);
       }
     });
-    Bios.onPad("circle", () => {
-      location.href = target;
-    });
+    Bios.onPad("circle", () => Bios.navigate(target));
   }
 
   addEventListener("DOMContentLoaded", () => {
     initCorners();
     initNotice();
+    initTransitions();
     initBack();
     pollPad();
   });

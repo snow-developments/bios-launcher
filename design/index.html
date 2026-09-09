@@ -100,15 +100,13 @@
       },
       onActivate(el) {
         const href = el.getAttribute("href");
-        if (href && href !== "#") location.href = href;
+        if (href && href !== "#") Bios.navigate(href);
         else Bios.notify("Selection acknowledged.");
       },
     });
 
     // Version shortcut: triangle button / V key
-    const version = () => {
-      location.href = "about.html";
-    };
+    const version = () => Bios.navigate("about.html");
     Bios.onPad("triangle", version);
     addEventListener("keydown", (e) => {
       if (e.key === "v" || e.key === "V") version();

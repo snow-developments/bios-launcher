@@ -24,7 +24,8 @@ Conventions for the `design/` mockups ([[design-is-mockups]]):
   circle (that produced an "awful padding" bug). `.glyph` circle ~`1.55em`,
   inner `svg` ~`.6em`, stroked with `currentColor`.
 - **Orbital motifs.** The `index.html` node ring is now a **WebGPU canvas**
-  (`design/orrery.js`, the "orrery"), not CSS — 8 nodes + 2 wireframe rings on
+  (`design/orrery.js`, the "orrery" — name is settled, do not reopen), not CSS
+  — 8 nodes + 2 wireframe rings on
   a tilted plane in WGSL, with a `.orrery--fallback` static CSS core when
   `requestAdapter()` fails. It fires an `orrery:ready` DOM event and exposes
   `globalThis.orrery.nodePositions()` (viewport-px node centres, or `null` in
@@ -37,6 +38,13 @@ Conventions for the `design/` mockups ([[design-is-mockups]]):
   `plan-checkboxes` skill (`.claude/skills/plan-checkboxes/server.ts`) serves
   them with live checkboxes that persist to the file — run with
   `deno run --allow-read --allow-write --allow-net`.
+- **Page transitions.** All internal navigation goes through `Bios.navigate(url)`
+  in `launcher.js`: it adds `.is-leaving` to `<html>`, waits `PAGE_FADE_MS`
+  (240, kept in sync with `html.is-leaving .shell` in `launcher.css`), then
+  swaps `location.href`. A document-level click interceptor routes same-origin
+  `<a>` clicks through it; `.shell` also runs a `shell-in` fade on every load.
+  Pure JS/CSS cross-fade (no `@view-transition`), all browsers, reduced-motion
+  does an instant swap.
 - **Every page** handles `prefers-reduced-motion` (kill spin, keep static state)
   and has a mobile `@media (max-width: 720px)` breakpoint (stack columns,
   static-position absolute panels).
