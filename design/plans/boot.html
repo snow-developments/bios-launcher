@@ -529,7 +529,10 @@ hr.rule {
     <h1>Boot Splash</h1>
     <p class="lede">
       A PlayStation&nbsp;2&ndash;style boot screen shown on <code>index.html</code> while the
-      orrery&rsquo;s WebGPU shaders compile &mdash; drifting cubes in a blue nebula, three
+      orrery&rsquo;s WebGPU shaders compile.
+    </p>
+    <p>
+      Drifting cubes in a blue nebula, three
       colored light&nbsp;trails, the wordmark. It never rests: on exit the wordmark fades, the
       camera flies into the fog past the cubes, and the trails morph to the orrery&rsquo;s node
       positions.
@@ -599,7 +602,8 @@ hr.rule {
   <section>
     <p class="eyebrow">01 &rarr; 06</p>
     <h2>Splash Sequence</h2>
-    <p style="margin-block: 8px;">The splash markup sits first in <code>&lt;body&gt;</code>, so it covers everything from the
+    <p style="margin-block: 8px;">
+      The splash markup sits first in <code>&lt;body&gt;</code>, so it covers everything from the
       first paint. The orrery renders live behind the splash the whole time. The wordmark is a
       self-contained beat near the middle; the exit is a separate later beat that <code>splash.js</code>
       holds back until <b>both</b> <code>orrery:ready</code> has fired <b>and</b> at least <b>3&nbsp;s</b>
