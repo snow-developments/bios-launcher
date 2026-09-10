@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+vars:
+  GREETING: Run `task build` to build the project.
+
+# The MSBuild terminal logger uses VT100 erase/cursor codes for its live
+# progress region. Terminals that report as capable but don't honor those codes
+# (Zed, the Claude desktop terminal) leave the region uncleared and the app's
+# own stdout/stderr gets overwritten. MSBUILDTERMINALLOGGER=off is the
+# documented global opt-out; it must live at the Taskfile root — nested under
+# `tasks:` it is parsed as a task named "env" and never takes effect.
+env:
+  MSBUILDTERMINALLOGGER: 'off'
+
+tasks:
+  default:
+    desc: Print a greeting message
+    cmds:
+      - echo "{{.GREETING}}"
+      # TODO: Package and publish the app
+    silent: true
+
+  build:
+    desc: Build the solution
+    cmds:
+    - dotnet build BiosLauncher.slnx
+
+  run:
+    desc: Run the launcher
+    cmds:
+    - dotnet run --project src/Bios.Launcher

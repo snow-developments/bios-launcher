@@ -7,6 +7,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <InvariantGlobalization>true</InvariantGlobalization>
     <RuntimeIdentifier Condition="'$(TargetFramework)' == 'net10.0-windows'">win-x64</RuntimeIdentifier>
+    <!-- Plural form is read at restore time so the RID-specific assets land in the
+         graph; without it a standalone `dotnet restore` omits them and the next
+         RID-aware build fails NETSDK1047. See https://learn.microsoft.com/dotnet/core/tools/sdk-errors/netsdk1005 -->
+    <RuntimeIdentifiers Condition="'$(TargetFramework)' == 'net10.0-windows'">win-x64</RuntimeIdentifiers>
     <!-- Allow net10.0-windows projects to build on non-Windows hosts (CI, dev on Linux/macOS).
          Running them still requires Windows; see design/scaffold.md. -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>

@@ -1,7 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <!-- Debug runs from a terminal and needs console stdout/stderr (NLog lines,
+         exception dumps); the WinExe GUI subsystem detaches from the parent
+         console and swallows them. -->
+    <!-- See https://learn.microsoft.com/windows/console/console-allocation-policy -->
+    <OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
+    <!-- Release ships as the windowed app. -->
+    <OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <RootNamespace>Bios.Launcher</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -18,5 +23,4 @@
     <PackageReference Include="NLog.Extensions.Logging" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
   </ItemGroup>
-
 </Project>

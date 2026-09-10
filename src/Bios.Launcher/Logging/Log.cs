@@ -13,7 +13,7 @@ namespace Bios.Launcher.Logging;
 /// path is <c>%LOCALAPPDATA%\BIOS Launcher\logs\launcher.log</c>; tests pass an
 /// isolated temporary path.
 /// </summary>
-public static class LauncherLogging
+public static class Log
 {
     public const string LogFolderName = "logs";
     public const string LogFileName = "launcher.log";
@@ -41,6 +41,20 @@ public static class LauncherLogging
         };
         config.AddTarget(file);
         config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, file);
+
+#if DEBUG
+        // Debug builds mirror logs to the console: Info/Warn on stdout, Error/Fatal on stderr.
+        var consoleLayout = Layout.FromString(
+            "${time}|${level:uppercase=true}|${logger}|${message} ${exception:format=tostring}");
+
+        var stdout = new ConsoleTarget("launcher-logs") { Layout = consoleLayout };
+        config.AddTarget(stdout);
+        config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Warn, stdout);
+
+        var stderr = new ConsoleTarget("launcher-errors") { Layout = consoleLayout, StdErr = true };
+        config.AddTarget(stderr);
+        config.AddRule(NLog.LogLevel.Error, NLog.LogLevel.Fatal, stderr);
+#endif
 
         return LoggerFactory.Create(builder =>
         {

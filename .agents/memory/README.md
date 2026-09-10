@@ -14,6 +14,9 @@ Durable, cross-agent facts about this repo. Read these at session start.
   Entertainment", subsidiary of Snow Developments, LLC
 - [Preview verification limits](preview-verification-limits.md) — the local
   design/ preview: no GPU, stale asset cache, slow eval, flaky tabs
+- [.NET launcher status](dotnet-launcher-status.md) — the Bios.* solution
+  layout and the 2026-09-10 RID / logging / console-output (WinExe subsystem,
+  Taskfile `env:`) fixes
 
 ## Reference
 
@@ -24,6 +27,15 @@ Durable, cross-agent facts about this repo. Read these at session start.
 
 - [Minimal over clever](minimal-over-clever.md) — smallest pragmatic solution;
   act, don't narrate-and-wait
+- [Verify in the user's environment](verify-in-users-environment.md) — a green
+  run in a non-equivalent setup (pipe vs TTY, no GPU) isn't verification; name
+  the gap, don't claim done
+- [Cite primary source in comments](cite-primary-source-in-comments.md) — a
+  comment explaining external behaviour needs a `<!-- See {href} -->` vendor
+  link; codified in `.agents/Style.md`
+- [Docs MCP before diagnosing](docs-mcp-before-diagnosing.md) — named-tool /
+  error-code failures: read Microsoft Learn MCP / Context7 / web fully before
+  proposing a fix or theory
 - [Designs as artifacts](designs-as-artifacts.md) — designs/plans go in
   artifacts with real formatting, never a chat wall of text
 - [Move files literally](move-files-literally.md) — git mv / mv, never

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 var options = CommandLineOptions.Parse(args);
 
-using var loggerFactory = LauncherLogging.CreateFactory();
+using var loggerFactory = Log.CreateFactory();
 var log = loggerFactory.CreateLogger("Bios.Launcher");
 log.LogInformation("Launcher starting (diagnostics={Diagnostics})", options.Diagnostics);
 
