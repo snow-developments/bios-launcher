@@ -20,8 +20,7 @@ using var host = new RendererHost(renderFrame: () => log.LogInformation("Frame s
 var app = new LauncherApp(catalog, host, loggerFactory.CreateLogger<LauncherApp>());
 await app.LoadAsync();
 
-if (options.Diagnostics)
-{
+if (options.Diagnostics) {
     var panel = new DiagnosticsPanel(host.Counters);
     log.LogInformation("Diagnostics panel requested\n{Snapshot}", panel.SnapshotText());
     // panel.Show(); // Windows build pass

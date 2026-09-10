@@ -13,12 +13,17 @@ insert_final_newline = true
 [*.md]
 trim_trailing_whitespace = false
 
+[*.cs]
+indent_size = 4
+
+# Disable diagnostic CA1873: Evaluation of this argument may be expensive and unnecessary if logging is disabled
+# See https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1873
+dotnet_diagnostic.CA1873.severity = none
+
 # C#: K&R braces. The .NET / Roslyn default is Allman (open brace on its own
 # line); these keys force the brace onto the same line as its statement and
 # keep else/catch/finally on the line of the preceding close brace.
 # See https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#new-line-options
-[*.cs]
-indent_size = 4
 csharp_new_line_before_open_brace = none
 csharp_new_line_before_else = false
 csharp_new_line_before_catch = false
