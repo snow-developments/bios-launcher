@@ -48,5 +48,12 @@ Durable, cross-agent facts about this repo. Read these at session start.
   rewrite-to-move
 - [Commit conventions](commit-conventions.md) — commit/stash/PR wording lives in
   the writing-commit-messages skill; invoke it before drafting a message
-- [Authoring for Chance](authoring-for-chance.md) — encoding his conventions:
-  mine chances repos, grill with AskUserQuestion, mirror skill to .agents/skills
+- [Authoring personal conventions](authoring-personal-conventions.md) — encoding
+  the user's conventions: mine their repos, grill with AskUserQuestion, mirror
+  skill to .agents/skills
+- [Design idioms](design-idioms.md) — pre-empt the OO smells the user rejects
+  by name (imperative bookkeeping, dirty flags, passed-around Actions,
+  self-subscribed events); design docs are provisional in pre-alpha
+- [Grilling with AskUserQuestion](grilling-with-askuserquestion.md) — the
+  grilling / grill-me skill's prose Q-format never exempts discrete choices from
+  AskUserQuestion (batch up to 6 per call)

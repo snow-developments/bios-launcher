@@ -29,4 +29,5 @@ house style with no rework; the conventions were reverse-engineered from 12 of
 his repos and confirmed by interview.
 
 **How to apply:** Invoke the `writing-commit-messages` skill when a commit
-message is needed. Related: [[authoring-for-chance]], [[minimal-over-clever]].
+message is needed. Related: [[authoring-personal-conventions]],
+[[minimal-over-clever]].

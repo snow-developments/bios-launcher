@@ -30,6 +30,49 @@ public static string DefaultLogPath(string dir) {
 }
 ```
 
+### Notifications are events, not passed-around delegates
+
+A type that notifies observers of something it did exposes a C# `event`, not a
+settable `Action`/`Func` property or a constructor `Action` parameter threaded
+through from the composition root. Passing delegates around by hand hides the
+subscriber graph, lets one caller silently clobber another's handler, and makes
+the wiring order load-bearing.
+
+```csharp
+// no: caller assigns, only one handler, order matters
+public Action<Command>? OnCommand { get; set; }
+public RendererHost(Action? renderFrame = null, Action? wake = null) { ... }
+
+// yes: many subscribers, no clobbering, self-contained wiring
+public event Action<Command>? CommandReceived;
+public event Action? RenderFrame;
+```
+
+A callback that is genuinely single-owner and internal (e.g. a queue's wake
+signal) stays inside the class that owns both ends — wire it in the method that
+creates the collaborator, not by taking it as a parameter.
+
+### A type never subscribes to its own event
+
+If a class needs to do bookkeeping when it raises an event, it does that work
+at the raise site — inline, before or after the `Invoke` — not by subscribing a
+handler to its own event. Self-subscription adds an indirection with no
+observer benefit, reorders side effects unpredictably, and risks re-entrancy.
+
+```csharp
+// no: host subscribes to its own RenderFrame to bump a counter
+RenderFrame += () => _counters.Frames++;
+
+// yes: bump where it is raised
+private void SubmitFrame() {
+    _counters.Frames++;
+    RenderFrame?.Invoke();
+}
+```
+
+Counters incremented this way stay read-only to the outside; drop any external
+`MarkX()` mutators — the incrementing is the raiser's own bookkeeping.
+
 ## Comments
 
 ### Cite the primary source for behavioral claims

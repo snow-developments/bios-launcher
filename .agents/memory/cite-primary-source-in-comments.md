@@ -27,5 +27,14 @@ next reader verify the claim still holds without re-deriving it.
 **How to apply:** Writing a comment that explains external behavior →
 add `<!-- See {href} -->` on the next line, pointing at the vendor reference.
 No citation, no behavioral claim. Codified as an `AGENTS.md` rule and in
-`.agents/Style.md`. Related: [[minimal-over-clever]],
-[[verify-in-users-environment]], [[docs-mcp-before-diagnosing]].
+`.agents/Style.md`.
+
+In **prose docs** (design notes under `design/`, plans under `design/plans/`)
+the same "cite the primary source" expectation holds, but the form is a plain
+inline `[text](href)` link in the sentence — not a formal `- Source: <url>`
+sub-bullet apparatus. The user's words: "Inline a[hrefs] are fine, you don't
+have to be that formal." Keep the substance (which claims are unverified, what
+to re-check) inline in the prose.
+
+Related: [[minimal-over-clever]], [[verify-in-users-environment]],
+[[docs-mcp-before-diagnosing]].

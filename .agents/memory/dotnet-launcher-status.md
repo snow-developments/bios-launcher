@@ -15,7 +15,14 @@ solution (scaffolded in `Scaffold the .NET launcher solution`):
   sets `EnableWindowsTargeting` so it builds on non-Windows hosts.
 - `RendererHost.Run` (`src/Bios.Platform/RendererHost.cs`) is a v0.1 skeleton
   that throws `NotImplementedException`; `dotnet run` reaching it exits 82.
-  That exit is expected until the Windows render loop lands.
+  That exit is expected until the Windows render loop lands. A full
+  implementation plan exists at
+  `design/plans/2026-09-10-renderer-host-run.md` (design in
+  `design/plans/renderer-host-run.md`): drops `MarkRunning` / passed-around
+  `Action`s for a `RenderFrame`/`CommandReceived` event model, derives
+  `IsRunning` from `Run()` being on the stack, adds an `IViewFactory` +
+  `IRenderSurface` seam, and rewrites the headless tests onto a `FakeView` +
+  `RendererHostHarness`. Not yet executed as of 2026-09-10.
 
 Landed 2026-09-10, uncommitted:
 
