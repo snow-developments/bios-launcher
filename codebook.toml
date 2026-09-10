@@ -1,1 +1,8 @@
-words = ["longdate"]
+words = [
+  "ACMR",
+  "MSBUILDTERMINALLOGGER",
+  "createprocess",
+  "longdate",
+  "progpu",
+  "tize",
+]

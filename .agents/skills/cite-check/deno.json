@@ -1,0 +1,21 @@
+{
+  "name": "@bios/cite-check",
+  "version": "0.1.0",
+  "exports": "./cite-check.ts",
+  "tasks": {
+    "check": "deno run --allow-read --allow-env --allow-run=git cite-check.ts",
+    "check:all": "deno run --allow-read --allow-env --allow-run=git cite-check.ts --all",
+    "self-test": "deno run --allow-read --allow-env cite-check.ts --self-test"
+  },
+  "fmt": {
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "useTabs": false,
+    "semiColons": true,
+    "singleQuote": false,
+    "proseWrap": "preserve"
+  },
+  "imports": {
+    "compromise": "npm:compromise@14"
+  }
+}

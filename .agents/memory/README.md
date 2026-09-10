@@ -17,6 +17,12 @@ Durable, cross-agent facts about this repo. Read these at session start.
 - [.NET launcher status](dotnet-launcher-status.md) — the Bios.* solution
   layout and the 2026-09-10 RID / logging / console-output (WinExe subsystem,
   Taskfile `env:`) fixes
+- [Repo style guide](repo-style-guide.md) — `.agents/Style.md` holds code +
+  prose conventions (US English, K&R braces, cite primary sources); read it
+  before writing either
+- [cite-check skill](cite-check-skill.md) — `.agents/skills/cite-check` lints
+  comments for uncited behavioral claims; a `Stop` hook runs it each turn and
+  blocks on findings
 
 ## Reference
 
@@ -31,7 +37,7 @@ Durable, cross-agent facts about this repo. Read these at session start.
   run in a non-equivalent setup (pipe vs TTY, no GPU) isn't verification; name
   the gap, don't claim done
 - [Cite primary source in comments](cite-primary-source-in-comments.md) — a
-  comment explaining external behaviour needs a `<!-- See {href} -->` vendor
+  comment explaining external behavior needs a `<!-- See {href} -->` vendor
   link; codified in `.agents/Style.md`
 - [Docs MCP before diagnosing](docs-mcp-before-diagnosing.md) — named-tool /
   error-code failures: read Microsoft Learn MCP / Context7 / web fully before

@@ -1,6 +1,6 @@
 ---
 name: cite-primary-source-in-comments
-description: A code comment that explains non-obvious platform/tool behaviour must cite its primary source with a `<!-- See {href} -->` (or language-equivalent) line
+description: A code comment that explains non-obvious platform/tool behavior must cite its primary source with a `<!-- See {href} -->` (or language-equivalent) line
 type: feedback
 ---
 
@@ -20,12 +20,12 @@ YAML, etc.). Prefer the deepest stable URL (with anchor) over a docs landing
 page. Find the source via the docs MCPs first — see
 [[docs-mcp-before-diagnosing]].
 
-**Why:** The owner audits behavioural claims in comments and asks "cite your
+**Why:** The owner audits behavioral claims in comments and asks "cite your
 source"; an uncited claim is treated as a guess. A primary-source link lets the
 next reader verify the claim still holds without re-deriving it.
 
-**How to apply:** Writing a comment that explains external behaviour →
+**How to apply:** Writing a comment that explains external behavior →
 add `<!-- See {href} -->` on the next line, pointing at the vendor reference.
-No citation, no behavioural claim. Codified as an `AGENTS.md` rule and in
+No citation, no behavioral claim. Codified as an `AGENTS.md` rule and in
 `.agents/Style.md`. Related: [[minimal-over-clever]],
 [[verify-in-users-environment]], [[docs-mcp-before-diagnosing]].

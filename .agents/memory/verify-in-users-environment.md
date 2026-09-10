@@ -8,7 +8,7 @@ When the owner reports a symptom seen in their environment — an interactive
 terminal, their editor, a real GPU browser, a specific shell — a passing run in
 a *different* environment does not verify the fix. Piping a command through the
 Bash tool makes stdout a non-TTY, which both silently disables TTY-only
-behaviour and hands the child an inherited pipe handle — so the actual root
+behavior and hands the child an inherited pipe handle — so the actual root
 cause here (a `WinExe` process not being attached to the parent console in a
 TTY) could never show up in a piped run. Every "fixed and verified" claim was
 checked against a setup that could not exhibit the problem.
